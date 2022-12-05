@@ -3,6 +3,9 @@ from typing import List, Dict
 import numpy as np
 
 
+Days = [i for i in range(5)]
+Lesson_hours = [i for i in range(10)]
+
 class Teachers:
     def __init__(self):
         self.list = []
