@@ -2,6 +2,7 @@ from typing import List, Dict
 
 import numpy as np
 
+
 class Teachers:
     def __init__(self):
         self.list = []
@@ -19,7 +20,7 @@ class Classes:
 
     def add_class(self, nr):
         self.dict[len(self.dict)] = nr
-        self.list.append((nr))
+        self.list.append(nr)
 
 
 class Subject:
@@ -40,8 +41,10 @@ class Year:
 
 
 class TimeTable:
-    def __init__(self, teachers: Teachers, classes: Classes, year: List[Year]):
-        self.table: List[np.ndarray] = [np.empty((5, 10, 0)), np.empty((5, 10, len(teachers.list))), np.empty((5, 10, len(classes.list)))]
+    def __init__(self, teachers: Teachers, classes: Classes):
+        self.table: List[np.ndarray] = [np.zeros((5, 10, 0), dtype=object),
+                                        np.zeros((5, 10, len(teachers.list)), dtype=object),
+                                        np.zeros((5, 10, len(classes.list)), dtype=object)]
         self.classes = classes
         self.teachers = teachers
 
@@ -55,4 +58,3 @@ class TimeTable:
         self.d_years[len(self.d_years)] = year
         self.years.append(year)
         self.update_size()
-
