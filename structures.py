@@ -27,6 +27,7 @@ class Subject:
     def __init__(self, name, hours, teachers: List[int], classes: List[int]):
         self.name = name
         self.hours = hours
+        self.hours_left = hours
         self.teachers = teachers
         self.classes = classes
 
@@ -48,7 +49,7 @@ class TimeTable:
         self.classes = classes
         self.teachers = teachers
 
-        self.years: List = []
+        self.years: List = [] 
         self.d_years: Dict = {}
 
     def update_size(self):
