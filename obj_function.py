@@ -1,7 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 import structures
-class TimeTable:
+
+
+class Obj:
     def beginning_time(self):
         delay_time_for_classes : List[int] = []
         for year in range(self.table[0].shape[0]):# dla każdej klasy 
