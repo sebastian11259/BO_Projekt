@@ -1,5 +1,6 @@
 from typing import List, Dict
-
+import os
+import pandas as pd
 import numpy as np
 
 Days = [i for i in range(5)]
@@ -11,9 +12,13 @@ class Teachers:
         self.list = []
         self.dict = {}
 
-    def add_teacher(self, name, dostepnosc):
-        self.dict[len(self.dict)] = name
-        self.list.append((name, dostepnosc))
+    def add_teacher(self, name):
+        self.dict[name] = len(self.dict)
+        self.list.append(name)
+
+    def get_id(self, name):
+        return self.dict[name]
+
 
 
 class Classes:
@@ -22,8 +27,11 @@ class Classes:
         self.dict = {}
 
     def add_class(self, nr):
-        self.dict[len(self.dict)] = nr
+        self.dict[nr] = len(self.dict)
         self.list.append(nr)
+
+    def get_id(self, nr):
+        return self.dict[nr]
 
 
 class Subject:
@@ -51,21 +59,30 @@ class Year:
 
 
 class TimeTable:
-    def __init__(self, teachers: Teachers, classes: Classes):
-        self.table: List[np.ndarray] = [np.zeros((0, 5, 10), dtype=object),
-                                        np.zeros((len(teachers.list), 5, 10), dtype=object),
-                                        np.zeros((len(classes.list), 5, 10), dtype=object)]
-        self.classes = classes
-        self.teachers = teachers
+    def __init__(self):
+        self.classes = Classes()
+        self.teachers = Teachers()
 
-        self.years: List = []
+        df = pd.read_excel('teachers.xlsx')
+        for i, j in df.iterrows():
+            self.teachers.add_teacher((j['Imię i nazwisko']))
+
+        df = pd.read_excel('classes.xlsx')
+        for i, j in df.iterrows():
+            self.classes.add_class(str(j['Nr Sali']))
+
+        self.years: List[Year] = []
         self.d_years: Dict = {}
 
+        self.table: List[np.ndarray] = [np.zeros((0, 5, 6), dtype=object),
+                                        np.zeros((len(self.teachers.list), 5, 6), dtype=object),
+                                        np.zeros((len(self.classes.list), 5, 6), dtype=object)]
+
     def update_size(self):
-        self.table[0] = np.empty((len(self.years), 5, 10))
+        self.table[0] = np.empty((len(self.years), 5, 6))
 
     def add_year(self, year):
-        self.d_years[len(self.d_years)] = year
+        self.d_years[year] = len(self.d_years)
         self.years.append(year)
         self.update_size()
 
@@ -95,6 +112,38 @@ class TimeTable:
             self.table[2][c, day, time] = (y, t, c, sub)
         if sub.hours_left > 0:
             sub.hours_left -= 1
+
+    def all_years(self):
+        y = []
+        for y_ in self.years:
+            y.append(y_.name)
+        return y
+
+    def all_teachers(self):
+        return self.teachers.list
+
+    def all_classes(self):
+        return self.classes.list
+
+    def load_years(self):
+        for filename in os.listdir('Klasy'):
+            f = os.path.join('Klasy', filename)
+            # checking if it is a xlsx file
+            if os.path.isfile(f) and f[-4:] == 'xlsx':
+                df = pd.read_excel(f)
+                y = Year(filename[:-5])
+                for i, j in df.iterrows():
+                    t = j['Prowadzący'].split(', ') # lista prowadzących z excela - nazwy
+                    t_ = []                         # lista prowadzących z excela - id
+                    for i in t:
+                        t_.append(self.teachers.get_id(i))
+                    c = str(j['Sala']).split(', ')  # lista s z excela - nr
+                    c_ = []                         # lista s z excela - id
+                    for i in c:
+                        c_.append(self.classes.get_id(i))
+                    y.add_subject(j['Nazwa'], j['Liczba godzin'], t_, c_)
+                self.add_year(y)
+
 
 # Funkcje do utowrzenia funkcji celu
 
