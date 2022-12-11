@@ -52,10 +52,12 @@ class Subject:
 class Year:
     def __init__(self, name):
         self.name = name
-        self.subjects = []
+        self.subjects: List[Subject] = []
+        self.hours_left = 0
 
     def add_subject(self, name, hours, teachers: List[int], classes: List[int]):
         self.subjects.append(Subject(name, hours, teachers, classes))
+        self.hours_left += hours
 
 
 class TimeTable:
@@ -79,7 +81,7 @@ class TimeTable:
                                         np.zeros((len(self.classes.list), 5, 6), dtype=object)]
 
     def update_size(self):
-        self.table[0] = np.empty((len(self.years), 5, 6))
+        self.table[0] = np.zeros((len(self.years), 5, 6), dtype=object)
 
     def add_year(self, year):
         self.d_years[year] = len(self.d_years)
@@ -105,13 +107,18 @@ class TimeTable:
         return c
 
     def put_sub(self, day, time, y, t, c, sub: Subject):
-        self.table[0][y, day, time] = (y, t, c, sub)
-        if t is not None:
-            self.table[1][t, day, time] = (y, t, c, sub)
-        if c is not None:
-            self.table[2][c, day, time] = (y, t, c, sub)
         if sub.hours_left > 0:
             sub.hours_left -= 1
+            self.years[y].hours_left -= 1
+            self.table[0][y, day, time] = (y, t, c, sub)
+            if t is not None:
+                self.table[1][t, day, time] = (y, t, c, sub)
+            if c is not None:
+                self.table[2][c, day, time] = (y, t, c, sub)
+
+
+    def get_year_id(self, year):
+        return self.d_years[year]
 
     def all_years(self):
         y = []
@@ -143,6 +150,76 @@ class TimeTable:
                         c_.append(self.classes.get_id(i))
                     y.add_subject(j['Nazwa'], j['Liczba godzin'], t_, c_)
                 self.add_year(y)
+
+    def get_tables(self):
+        tables = []
+        for y in self.years:
+            y_idx = self.get_year_id(y)
+            tt = np.zeros([6,5], dtype=object)
+            for day in range(5):
+                for time in range(6):
+                    if self.table[0][y_idx, day, time] == 0:
+                        tt[time][day] = None
+                    else:
+                        if self.table[0][y_idx, day, time][1] is None:
+                            t = None
+                        else:
+                            t = self.teachers.list[self.table[0][y_idx, day, time][1]]
+
+                        if self.table[0][y_idx, day, time][2] is None:
+                            c = None
+                        else:
+                            c = self.classes.list[self.table[0][y_idx, day, time][2]]
+                        s = self.table[0][y_idx, day, time][3].name
+                        str = '{}, {}, Sala nr {}'.format(s, t, c)
+                        tt[time][day] = str
+            tables.append(pd.DataFrame(tt, columns=['Day 1','Day 2','Day 3', 'Day 4', 'Day 5']))
+
+        return tables
+
+# Rozwiązanie startowe
+    def initial_1(self): # rozkłada zajęcia po kolei w wolnych terminach
+        for y in self.years:
+            y_idx = self.get_year_id(y)
+            for day in range(5):
+                for time in range(6):
+                    for s in y.subjects:
+                        if s.hours_left != 0:
+                            t_idx = self.choose_teacher(s, day, time)
+                            c_idx = self.choose_class(s, day, time)
+                            self.put_sub(day, time, y_idx, t_idx, c_idx, s)
+                            break
+                        else:
+                            continue
+
+    def initial_2(self): # rozkłada zajęcia po kolei w wolnych terminach tylko gdy jest wolny nauczyciel i sala, dopiero potem jak sie nie udało rozdzielić wszystkich to reszte rozklada w pierwszysch wolnych terminach
+        for y in self.years:
+            y_idx = self.get_year_id(y)
+            for day in range(5):
+                for time in range(6):
+                    for s in y.subjects:
+                        if s.hours_left != 0:
+                            t_idx = self.choose_teacher(s, day, time)
+                            c_idx = self.choose_class(s, day, time)
+                            if t_idx is None or c_idx is None:
+                                continue
+                            else:
+                                self.put_sub(day, time, y_idx, t_idx, c_idx, s)
+                            break
+                        else:
+                            continue
+            if y.hours_left > 0:
+                for day in range(5):
+                    for time in range(6):
+                        if self.table[0][y_idx, day, time] == 0:
+                            for s in y.subjects:
+                                if s.hours_left != 0:
+                                    t_idx = self.choose_teacher(s, day, time)
+                                    c_idx = self.choose_class(s, day, time)
+                                    self.put_sub(day, time, y_idx, t_idx, c_idx, s)
+                                    break
+                                else:
+                                    continue
 
 
 # Funkcje do utowrzenia funkcji celu
