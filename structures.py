@@ -2,9 +2,9 @@ from typing import List, Dict
 import os
 import pandas as pd
 import numpy as np
-
+num_of_lessons_pear_day = 6
 Days = [i for i in range(5)]
-Lesson_hours = [i for i in range(10)]
+Lesson_hours = [i for i in range(num_of_lessons_pear_day)]
 
 
 class Teachers:
@@ -19,6 +19,9 @@ class Teachers:
     def get_id(self, name):
         return self.dict[name]
 
+    def __str__(self):
+        return str(self.dict)
+
 
 
 class Classes:
@@ -32,6 +35,9 @@ class Classes:
 
     def get_id(self, nr):
         return self.dict[nr]
+
+    def __str__(self):
+        return str(self.dict)
 
 
 class Subject:
@@ -48,6 +54,9 @@ class Subject:
     def get_c(self):
         return self.classes
 
+    def __str__(self):
+        return str(self.name)
+
 
 class Year:
     def __init__(self, name):
@@ -58,6 +67,9 @@ class Year:
     def add_subject(self, name, hours, teachers: List[int], classes: List[int]):
         self.subjects.append(Subject(name, hours, teachers, classes))
         self.hours_left += hours
+
+    def __str__(self):
+        return str(self.name)
 
 
 class TimeTable:
@@ -79,6 +91,12 @@ class TimeTable:
         self.table: List[np.ndarray] = [np.zeros((0, 5, 6), dtype=object),
                                         np.zeros((len(self.teachers.list), 5, 6), dtype=object),
                                         np.zeros((len(self.classes.list), 5, 6), dtype=object)]
+
+    def __str__(self):
+        string = ""
+        for el in self.get_tables():
+            string += str(el) + "\n"
+        return string
 
     def update_size(self):
         self.table[0] = np.zeros((len(self.years), 5, 6), dtype=object)
@@ -230,7 +248,7 @@ class TimeTable:
             delay = 0  # opóźneinie w rozpoczęciu
             for day in Days:
                 for lesson_hour in Lesson_hours:
-                    if not self.table[0][year][day][lesson_hour]:
+                    if isinstance(self.table[0][year][day][lesson_hour], int):
                         break
                     delay += 1  # im wie
             delay_time_for_classes.append(delay)
@@ -241,10 +259,13 @@ class TimeTable:
         for year in range(self.table[0].shape[0]):  # dla każdej klasy
             delay = 0  # opóźneinie w zakonczeniu
             for day in Days:
+                delay_in_current_day = 0
                 for lesson_hour in reversed(Lesson_hours):
                     if isinstance(self.table[0][year][day][lesson_hour], tuple):
                         break
                     delay -= 1  # im mniejszy bd dealy tym lepiej można ewentualnie zrobić delay_time_for_classes = delay_time_for_classes - [min(delay_time_for_classes) for i in range(len(delay_time_for_classes))]
+                    delay_in_current_day -= 1
+                if delay_in_current_day == -6: delay += 6
             delay_time_for_classes.append(delay)
         return delay_time_for_classes
 

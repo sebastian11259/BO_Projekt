@@ -9,10 +9,14 @@ import numpy as np
 
 Ttable = structures.TimeTable()
 Ttable.load_years()
-
-print(Ttable.all_classes())
-print(Ttable.all_teachers())
-print(Ttable.all_years())
-
 Ttable.initial_2()
-Ttable.get_tables()
+print(Ttable.table[0][0][0][0])
+Ttable.table[0][0][0][0] = (Ttable.table[0][0][0][0][0], None, Ttable.table[0][0][0][0][2], Ttable.table[0][0][0][0][3])
+# print(Ttable.all_classes())
+# print(Ttable.all_teachers())
+# print(Ttable.all_years())
+print(Ttable.lack_of_teacher())
+print(Ttable)
+
+print(Ttable.finishing_time())
+# Ttable.table[0][0][0]
