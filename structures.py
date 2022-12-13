@@ -110,7 +110,7 @@ class TimeTable:
         teachers = sub.get_t()
         t = None
         for t_ in teachers:
-            if not isinstance(self.table[1][t_, day, time], tuple):
+            if not isinstance(self.table[1][t_, day, time], list):
                 t = t_
                 break
         return t
@@ -119,7 +119,7 @@ class TimeTable:
         classes = sub.get_c()
         c = None
         for c_ in classes:
-            if not isinstance(self.table[2][c_, day, time], tuple):
+            if not isinstance(self.table[2][c_, day, time], list):
                 c = c_
                 break
         return c
@@ -128,11 +128,11 @@ class TimeTable:
         if sub.hours_left > 0:
             sub.hours_left -= 1
             self.years[y].hours_left -= 1
-            self.table[0][y, day, time] = (y, t, c, sub)
+            self.table[0][y, day, time] = [y, t, c, sub]
             if t is not None:
-                self.table[1][t, day, time] = (y, t, c, sub)
+                self.table[1][t, day, time] = [y, t, c, sub]
             if c is not None:
-                self.table[2][c, day, time] = (y, t, c, sub)
+                self.table[2][c, day, time] = [y, t, c, sub]
 
 
     def get_year_id(self, year):
@@ -261,7 +261,7 @@ class TimeTable:
             for day in Days:
                 delay_in_current_day = 0
                 for lesson_hour in reversed(Lesson_hours):
-                    if isinstance(self.table[0][year][day][lesson_hour], tuple):
+                    if isinstance(self.table[0][year][day][lesson_hour], list):
                         break
                     delay -= 1  # im mniejszy bd dealy tym lepiej można ewentualnie zrobić delay_time_for_classes = delay_time_for_classes - [min(delay_time_for_classes) for i in range(len(delay_time_for_classes))]
                     delay_in_current_day -= 1
@@ -284,7 +284,7 @@ class TimeTable:
             num = 0  # opóźneinie w rozpoczęciu
             for day in Days:
                 for lesson_hour in Lesson_hours:
-                    if isinstance(self.table[0][year][day][lesson_hour], tuple) and self.table[0][year][day][lesson_hour][1] is None:
+                    if isinstance(self.table[0][year][day][lesson_hour], list) and self.table[0][year][day][lesson_hour][1] is None:
                         num += 1
             number_of.append(num)
         return number_of
@@ -295,7 +295,7 @@ class TimeTable:
             num = 0  # opóźneinie w rozpoczęciu
             for day in Days:
                 for lesson_hour in Lesson_hours:
-                    if isinstance(self.table[0][year][day][lesson_hour], tuple) and self.table[0][year][day][lesson_hour][2] is None:
+                    if isinstance(self.table[0][year][day][lesson_hour], list) and self.table[0][year][day][lesson_hour][2] is None:
                         num += 1
             number_of.append(num)
         return number_of
@@ -310,7 +310,7 @@ def get_number_of_windows(list_of_lesson_hours: List):
         if lessons_started and isinstance(lesson_hours, int):
             window_might_happend = True
             windows_counter += 1
-        if isinstance(lesson_hours, tuple):
+        if isinstance(lesson_hours, list):
             lessons_started = True
             if window_might_happend:
                 general_windows_counter += windows_counter
