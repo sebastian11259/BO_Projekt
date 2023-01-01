@@ -2,6 +2,7 @@ from typing import List, Dict
 import os
 import pandas as pd
 import numpy as np
+import random
 num_of_lessons_pear_day = 6
 Days = [i for i in range(5)]
 Lesson_hours = [i for i in range(num_of_lessons_pear_day)]
@@ -21,7 +22,6 @@ class Teachers:
 
     def __str__(self):
         return str(self.dict)
-
 
 
 class Classes:
@@ -134,7 +134,6 @@ class TimeTable:
             if c is not None:
                 self.table[2][c, day, time] = [y, t, c, sub]
 
-
     def get_year_id(self, year):
         return self.d_years[year]
 
@@ -196,7 +195,7 @@ class TimeTable:
         return tables
 
 # Rozwiązanie startowe
-    def initial_1(self): # rozkłada zajęcia po kolei w wolnych terminach
+    def initial_1(self):  # rozkłada zajęcia po kolei w wolnych terminach
         for y in self.years:
             y_idx = self.get_year_id(y)
             for day in range(5):
@@ -239,6 +238,147 @@ class TimeTable:
                                 else:
                                     continue
 
+    # Sąsiedztwo
+
+    def neighbour_change_year(self):
+        pass
+
+    def neighbour_change_day(self):
+        pass
+
+    def neighbour_change_lesson(self):
+        # wyszukuję losową klasę, dzień i godzinę
+        ran_year = None
+        ran_day = None
+        ran_hour = None
+        for i in range(50):
+            ran_year = random.randint(0, self.table[0].shape[0])
+            ran_day = random.randint(0, len(Days))
+            ran_hour = random.randint(0, len(Lesson_hours))
+            if isinstance(self.table[0][ran_year, ran_day, ran_hour], list):
+                break
+
+        # Znajduję losowo wolny termin dla tej samej klasy
+        if isinstance(self.table[0][ran_year, ran_day, ran_hour], list):
+            y, t, c, sub = self.table[0][ran_year, ran_day, ran_hour]
+            list_of_empty: List[List[int]] = []
+
+            for day in Days:
+                for lesson_hour in Lesson_hours:
+                    if isinstance(self.table[0][ran_year][day][lesson_hour], int):
+                        list_of_empty.append([ran_year, day, lesson_hour, self.table[0][ran_year, day, lesson_hour][3]])
+
+            # usuwam stary termin i wpisuję w nowy
+            if list_of_empty:
+                ran_lesson_empty = random.choice(list_of_empty)
+                self.table[0][ran_lesson_empty[0], ran_lesson_empty[1], ran_lesson_empty[2]] = [y, t, c, sub]
+                self.table[0][ran_year, ran_day, ran_hour] = 0
+                if t:
+                    self.table[1][t, ran_day, ran_hour] = 0
+                    self.table[1][t, ran_lesson_empty[1], ran_lesson_empty[2]] = [y, t, c, sub]
+                if c:
+                    self.table[2][c, ran_day, ran_hour] = 0
+                    self.table[3][c, ran_lesson_empty[1], ran_lesson_empty[2]] = [y, t, c, sub]
+            else:  # jezeli nie ma wolnych terminow mozna zrobic wyszukanie losowe i zamiana miejscami
+                pass
+
+    def neighbour_change_classroom(self):
+        list_of_lacking_classroom: List[List[int]] = []
+
+        # znajduje lekcje gdzie nie ma sali
+        for year in range(self.table[0].shape[0]):
+            for day in Days:
+                for lesson_hour in Lesson_hours:
+                    if isinstance(self.table[0][year][day][lesson_hour], list) and \
+                            self.table[0][year][day][lesson_hour][2] is None:
+                        list_of_lacking_classroom.append(
+                            [year, day, lesson_hour, self.table[0][year][day][lesson_hour][3]])
+
+        # wybiera losowo lekcje i losowo salę
+        if list_of_lacking_classroom:
+            ran_lesson_lack = random.choice(list_of_lacking_classroom)
+            classroom = random.choice(ran_lesson_lack[3].get_c())
+
+            # wpisanie nowej sali
+            y, t, c, sub = self.table[0][ran_lesson_lack[0], ran_lesson_lack[1], ran_lesson_lack[2]]
+            y_prev = self.table[2][classroom, ran_lesson_lack[1], ran_lesson_lack[2]][0]
+            self.table[0][y, ran_lesson_lack[1], ran_lesson_lack[2]][2] = classroom
+            self.table[2][classroom, ran_lesson_lack[1], ran_lesson_lack[2]] = [y, t, classroom, sub]
+            if t:
+                self.table[1][t, ran_lesson_lack[1], ran_lesson_lack[2]] = [y, t, classroom, sub]
+            if isinstance(self.table[2][classroom, ran_lesson_lack[1], ran_lesson_lack[2]], list):
+                self.table[0][y_prev, ran_lesson_lack[1], ran_lesson_lack[2]][2] = c
+        else:
+            ran_year = None
+            ran_day = None
+            ran_hour = None
+            for i in range(50):
+                ran_year = random.randint(0, self.table[0].shape[0])
+                ran_day = random.randint(0, len(Days))
+                ran_hour = random.randint(0, len(Lesson_hours))
+                if isinstance(self.table[0][ran_year, ran_day, ran_hour], list):
+                    break
+
+            if isinstance(self.table[0][ran_year, ran_day, ran_hour], list):
+                ran_sub = self.table[0][ran_year][ran_day][ran_hour][3]
+                classroom = random.choice(ran_sub.get_c())
+                y, t, c, sub = self.table[0][ran_year, ran_day, ran_hour]
+                if c in self.table[2][classroom, ran_day, ran_hour][2].get_c():
+                    y_prev = self.table[2][classroom, ran_day, ran_hour][0]
+                    self.table[0][y_prev, ran_day, ran_hour][2] = c
+                    self.table[0][y, ran_day, ran_hour][2] = classroom
+                    self.table[1][t, ran_day, ran_hour] = classroom
+                    self.table[2][classroom, ran_day, ran_hour][2] = [y, t, classroom, sub]
+
+    def neighbour_change_teacher(self):
+        list_of_lacking_teachers: List[List[int]] = []
+
+        # znajduje lekcje gdzie nie ma nauczyciela
+        for year in range(self.table[0].shape[0]):
+            for day in Days:
+                for lesson_hour in Lesson_hours:
+                    if isinstance(self.table[0][year][day][lesson_hour], list) and \
+                            self.table[0][year][day][lesson_hour][1] is None:
+                        list_of_lacking_teachers.append([year, day, lesson_hour, self.table[0][year][day][lesson_hour][3]])
+
+        # wybiera losowo lekcje i losowo nauczyciela
+        if list_of_lacking_teachers:
+            ran_lesson_lack = random.choice(list_of_lacking_teachers)
+            teach = random.choice(ran_lesson_lack[3].get_t())
+
+            # wpisanie nowego nauczyciela
+            y, t, c, sub = self.table[0][ran_lesson_lack[0], ran_lesson_lack[1], ran_lesson_lack[2]]
+            y_prev = self.table[1][teach, ran_lesson_lack[1], ran_lesson_lack[2]][0]
+            self.table[0][y, ran_lesson_lack[1], ran_lesson_lack[2]][1] = teach
+            self.table[1][teach, ran_lesson_lack[1], ran_lesson_lack[2]] = [y, teach, c, sub]
+            if c:
+                self.table[2][c, ran_lesson_lack[1], ran_lesson_lack[2]] = [y, teach, c, sub]
+            if isinstance(self.table[1][teach, ran_lesson_lack[1], ran_lesson_lack[2]], list):
+                self.table[0][y_prev, ran_lesson_lack[1], ran_lesson_lack[2]][1] = t
+        else:
+            ran_year = None
+            ran_day = None
+            ran_hour = None
+            for i in range(50):
+                ran_year = random.randint(0, self.table[0].shape[0])
+                ran_day = random.randint(0, len(Days))
+                ran_hour = random.randint(0, len(Lesson_hours))
+                if isinstance(self.table[0][ran_year, ran_day, ran_hour], list):
+                    break
+
+            if isinstance(self.table[0][ran_year, ran_day, ran_hour], list):
+                ran_sub = self.table[0][ran_year][ran_day][ran_hour][3]
+                teach = random.choice(ran_sub.get_t())
+                y, t, c, sub = self.table[0][ran_year, ran_day, ran_hour]
+                if t in self.table[1][teach, ran_day, ran_hour][3].get_t():
+                    y_prev = self.table[1][teach, ran_day, ran_hour][0]
+                    self.table[0][y_prev, ran_day, ran_hour][1] = t
+                    self.table[0][y, ran_day, ran_hour][1] = teach
+                    self.table[1][teach, ran_day, ran_hour] = [y, teach, c, sub]
+                    self.table[2][c, ran_day, ran_hour][2] = teach
+
+    def neighbour_change_subject(self):
+        pass
 
 # Funkcje do utowrzenia funkcji celu
 
