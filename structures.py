@@ -251,10 +251,12 @@ class TimeTable:
         ran_year = None
         ran_day = None
         ran_hour = None
+        day = None
+        lesson_hour = None
         for i in range(50):
-            ran_year = random.randint(0, self.table[0].shape[0])
-            ran_day = random.randint(0, len(Days))
-            ran_hour = random.randint(0, len(Lesson_hours))
+            ran_year = random.randint(0, self.table[0].shape[0]-1)
+            ran_day = random.randint(0, len(Days)-1)
+            ran_hour = random.randint(0, len(Lesson_hours)-1)
             if isinstance(self.table[0][ran_year, ran_day, ran_hour], list):
                 break
 
@@ -266,11 +268,13 @@ class TimeTable:
             for day in Days:
                 for lesson_hour in Lesson_hours:
                     if isinstance(self.table[0][ran_year][day][lesson_hour], int):
-                        list_of_empty.append([ran_year, day, lesson_hour, self.table[0][ran_year, day, lesson_hour][3]])
+                        list_of_empty.append([ran_year, day, lesson_hour])
 
             # usuwam stary termin i wpisuję w nowy
             if list_of_empty:
                 ran_lesson_empty = random.choice(list_of_empty)
+                day = ran_lesson_empty[1]
+                lesson_hour = ran_lesson_empty[2]
                 self.table[0][ran_lesson_empty[0], ran_lesson_empty[1], ran_lesson_empty[2]] = [y, t, c, sub]
                 self.table[0][ran_year, ran_day, ran_hour] = 0
                 if t:
@@ -278,9 +282,11 @@ class TimeTable:
                     self.table[1][t, ran_lesson_empty[1], ran_lesson_empty[2]] = [y, t, c, sub]
                 if c:
                     self.table[2][c, ran_day, ran_hour] = 0
-                    self.table[3][c, ran_lesson_empty[1], ran_lesson_empty[2]] = [y, t, c, sub]
+                    self.table[2][c, ran_lesson_empty[1], ran_lesson_empty[2]] = [y, t, c, sub]
             else:  # jezeli nie ma wolnych terminow mozna zrobic wyszukanie losowe i zamiana miejscami
                 pass
+
+        return ran_year, ran_day, ran_hour, day, lesson_hour
 
     def neighbour_change_classroom(self):
         list_of_lacking_classroom: List[List[int]] = []
@@ -313,9 +319,9 @@ class TimeTable:
             ran_day = None
             ran_hour = None
             for i in range(50):
-                ran_year = random.randint(0, self.table[0].shape[0])
-                ran_day = random.randint(0, len(Days))
-                ran_hour = random.randint(0, len(Lesson_hours))
+                ran_year = random.randint(0, self.table[0].shape[0]-1)
+                ran_day = random.randint(0, len(Days)-1)
+                ran_hour = random.randint(0, len(Lesson_hours)-1)
                 if isinstance(self.table[0][ran_year, ran_day, ran_hour], list):
                     break
 
@@ -360,9 +366,9 @@ class TimeTable:
             ran_day = None
             ran_hour = None
             for i in range(50):
-                ran_year = random.randint(0, self.table[0].shape[0])
-                ran_day = random.randint(0, len(Days))
-                ran_hour = random.randint(0, len(Lesson_hours))
+                ran_year = random.randint(0, self.table[0].shape[0]-1)
+                ran_day = random.randint(0, len(Days)-1)
+                ran_hour = random.randint(0, len(Lesson_hours)-1)
                 if isinstance(self.table[0][ran_year, ran_day, ran_hour], list):
                     break
 
@@ -439,6 +445,19 @@ class TimeTable:
                         num += 1
             number_of.append(num)
         return number_of
+
+    def objective_fun(self, weights: List[int]):
+        beginning_time = [i * weights[0] for i in self.beginning_time()]
+        finishing_time = [i * weights[1] for i in self.finishing_time()]
+        windows = [i * weights[2] for i in self.windows()]
+        lack_of_teachers = [i * weights[3] for i in self.lack_of_teacher()]
+        lack_of_classrooms = [i * weights[0] for i in self.lack_of_rooms()]
+        fun_val_for_years = []
+        for i in range(self.table[0].shape[4]):
+            val = beginning_time[i] + finishing_time[i] + windows[i] + lack_of_teachers[i] + lack_of_classrooms[i]
+            fun_val_for_years.append(val)
+        mean = sum(fun_val_for_years)/len(fun_val_for_years)
+        return mean
 
 
 def get_number_of_windows(list_of_lesson_hours: List):
