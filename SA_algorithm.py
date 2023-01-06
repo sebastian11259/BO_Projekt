@@ -34,11 +34,15 @@ def sa_algorithm(temperature: float, alpha: float, eps: float, k: int, time_tabl
     end_result = copy.deepcopy(current_result)
     end_obj_fun = end_result.objective_fun(weights)
     obj_fun_vector = [current_obj_fun]
+    obj_fun_current_vec = [current_obj_fun]
+    obj_fun_end = [current_obj_fun]
 
     while T > eps:
         for i in range(k):
             new_obj_fun, new_result = get_neighbours(neighbour, current_result, weights)
-            obj_fun_vector.append(current_obj_fun)
+            obj_fun_vector.append(new_obj_fun)
+            obj_fun_current_vec.append(current_obj_fun)
+            obj_fun_end.append(end_obj_fun)
             delta = new_obj_fun - current_obj_fun
             if delta <= 0:
                 current_result = new_result
@@ -54,7 +58,7 @@ def sa_algorithm(temperature: float, alpha: float, eps: float, k: int, time_tabl
                     current_obj_fun = new_obj_fun
         T = T * alpha
 
-    return end_result, obj_fun_vector
+    return end_result, obj_fun_vector, obj_fun_current_vec, obj_fun_end
 
 
 def get_neighbours(list_of_neigh, time_table: st.TimeTable, weights: List[int]):
@@ -74,8 +78,10 @@ def get_neighbours(list_of_neigh, time_table: st.TimeTable, weights: List[int]):
         if list_of_neigh[i] == 1:
             copy_list[i].neighbour_change_lesson()
         elif list_of_neigh[i] == 2:
-            copy_list[i].neighbour_change_classroom()
+            copy_list[i].neighbour_add_teach_class()
         elif list_of_neigh[i] == 3:
+            copy_list[i].neighbour_change_classroom()
+        elif list_of_neigh[i] == 4:
             copy_list[i].neighbour_change_teacher()
         else:
             raise ValueError("One of neighbourhood ID is wrong")

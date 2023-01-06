@@ -251,8 +251,8 @@ class TimeTable:
         ran_year = None
         ran_day = None
         ran_hour = None
-        day = None
-        lesson_hour = None
+        day_empty = None
+        lesson_hour_empty = None
         for i in range(50):
             ran_year = random.randint(0, self.table[0].shape[0]-1)
             ran_day = random.randint(0, len(Days)-1)
@@ -273,20 +273,70 @@ class TimeTable:
             # usuwam stary termin i wpisuję w nowy
             if list_of_empty:
                 ran_lesson_empty = random.choice(list_of_empty)
-                day = ran_lesson_empty[1]
-                lesson_hour = ran_lesson_empty[2]
-                self.table[0][ran_lesson_empty[0], ran_lesson_empty[1], ran_lesson_empty[2]] = [y, t, c, sub]
+                day_empty = ran_lesson_empty[1]
+                lesson_hour_empty = ran_lesson_empty[2]
+                self.table[0][ran_year, day_empty, lesson_hour_empty] = [y, t, c, sub]
                 self.table[0][ran_year, ran_day, ran_hour] = 0
                 if t is not None:
+                    if isinstance(self.table[1][t, ran_lesson_empty[1], ran_lesson_empty[2]], list):
+                        yt = self.table[1][t, ran_lesson_empty[1], ran_lesson_empty[2]][0]
+                        self.table[0][yt, ran_lesson_empty[1], ran_lesson_empty[2]][1] = None
                     self.table[1][t, ran_day, ran_hour] = 0
                     self.table[1][t, ran_lesson_empty[1], ran_lesson_empty[2]] = [y, t, c, sub]
                 if c is not None:
+                    if isinstance(self.table[2][c, ran_lesson_empty[1], ran_lesson_empty[2]], list):
+                        yt = self.table[2][c, ran_lesson_empty[1], ran_lesson_empty[2]][0]
+                        self.table[0][yt, ran_lesson_empty[1], ran_lesson_empty[2]][2] = None
                     self.table[2][c, ran_day, ran_hour] = 0
                     self.table[2][c, ran_lesson_empty[1], ran_lesson_empty[2]] = [y, t, c, sub]
+
+                for year in range(self.table[0].shape[0]):
+                    if year != ran_year:
+                        if isinstance(self.table[0][year, ran_day, ran_hour], list):
+                            if self.table[0][year, ran_day, ran_hour][1] is None:
+                                teach = self.choose_teacher(self.table[0][year, ran_day, ran_hour][3], ran_day, ran_hour)
+                                if teach is not None:
+                                    y, t, c, sub = self.table[0][year, ran_day, ran_hour]
+                                    self.table[0][y, ran_day, ran_hour][1] = teach
+                                    self.table[1][teach, ran_day, ran_hour] = [y, teach, c, sub]
+                                    if c is not None:
+                                        self.table[2][c, ran_day, ran_hour][1] = teach
+                                    break
+                            if self.table[0][year, ran_day, ran_hour][2] is None:
+                                classroom = self.choose_class(self.table[0][year, ran_day, ran_hour][3], ran_day, ran_hour)
+                                if classroom is not None:
+                                    y, t, c, sub = self.table[0][year, ran_day, ran_hour]
+                                    self.table[0][y, ran_day, ran_hour][2] = classroom
+                                    self.table[2][classroom, ran_day, ran_hour] = [y, t, classroom, sub]
+                                    if c is not None:
+                                        self.table[1][t, ran_day, ran_hour][2] = classroom
+                                    break
             else:  # jezeli nie ma wolnych terminow mozna zrobic wyszukanie losowe i zamiana miejscami
                 pass
 
-        return ran_year, ran_day, ran_hour, day, lesson_hour
+        return ran_year, ran_day, ran_hour, day_empty, lesson_hour_empty
+
+    def neighbour_add_teach_class(self):
+        for year in range(self.table[0].shape[0]):
+            for day in Days:
+                for lesson in Lesson_hours:
+                    if isinstance(self.table[0][year, day, lesson], list):
+                        if self.table[0][year, day, lesson][1] is None:
+                            teach = self.choose_teacher(self.table[0][year, day, lesson][3], day, lesson)
+                            if teach is not None:
+                                y, t, c, sub = self.table[0][year, day, lesson]
+                                self.table[0][year, day, lesson][1] = teach
+                                self.table[1][teach, day, lesson] = [y, teach, c, sub]
+                                if c is not None:
+                                    self.table[2][c, day, lesson][1] = teach
+                        if self.table[0][year, day, lesson][2] is None:
+                            classroom = self.choose_class(self.table[0][year, day, lesson][3], day, lesson)
+                            if classroom is not None:
+                                y, t, c, sub = self.table[0][year, day, lesson]
+                                self.table[0][year, day, lesson][2] = classroom
+                                self.table[2][classroom, day, lesson] = [y, t, classroom, sub]
+                                if t is not None:
+                                    self.table[1][t, day, lesson][2] = classroom
 
     def neighbour_change_classroom(self):
         list_of_lacking_classroom: List[List[int]] = []
@@ -307,17 +357,13 @@ class TimeTable:
 
             # wpisanie nowej sali
             y, t, c, sub = self.table[0][ran_lesson_lack[0], ran_lesson_lack[1], ran_lesson_lack[2]]
-            # y_prev = self.table[2][classroom, ran_lesson_lack[1], ran_lesson_lack[2]][0]
             if isinstance(self.table[2][classroom, ran_lesson_lack[1], ran_lesson_lack[2]], list):
                 y_prev = self.table[2][classroom, ran_lesson_lack[1], ran_lesson_lack[2]][0]
                 self.table[0][y_prev, ran_lesson_lack[1], ran_lesson_lack[2]][2] = c
             self.table[0][y, ran_lesson_lack[1], ran_lesson_lack[2]][2] = classroom
             self.table[2][classroom, ran_lesson_lack[1], ran_lesson_lack[2]] = [y, t, classroom, sub]
             if t is not None:
-                self.table[1][t, ran_lesson_lack[1], ran_lesson_lack[2]] = [y, t, classroom, sub]
-            # if isinstance(self.table[2][classroom, ran_lesson_lack[1], ran_lesson_lack[2]], list):
-            #     y_prev = self.table[2][classroom, ran_lesson_lack[1], ran_lesson_lack[2]][0]
-            #     self.table[0][y_prev, ran_lesson_lack[1], ran_lesson_lack[2]][2] = c
+                self.table[1][t, ran_lesson_lack[1], ran_lesson_lack[2]][2] = classroom
         else:
             ran_year = None
             ran_day = None
@@ -364,9 +410,7 @@ class TimeTable:
             self.table[0][y, ran_lesson_lack[1], ran_lesson_lack[2]][1] = teach
             self.table[1][teach, ran_lesson_lack[1], ran_lesson_lack[2]] = [y, teach, c, sub]
             if c is not None:
-                self.table[2][c, ran_lesson_lack[1], ran_lesson_lack[2]] = [y, teach, c, sub]
-            # if isinstance(self.table[1][teach, ran_lesson_lack[1], ran_lesson_lack[2]], list):
-            #     self.table[0][y_prev, ran_lesson_lack[1], ran_lesson_lack[2]][1] = t
+                self.table[2][c, ran_lesson_lack[1], ran_lesson_lack[2]][1] = teach
         else:
             ran_year = None
             ran_day = None
@@ -400,7 +444,7 @@ class TimeTable:
             delay = 0  # opóźneinie w rozpoczęciu
             for day in Days:
                 for lesson_hour in Lesson_hours:
-                    if isinstance(self.table[0][year][day][lesson_hour], int):
+                    if isinstance(self.table[0][year][day][lesson_hour], list):
                         break
                     delay += 1  # im wie
             delay_time_for_classes.append(delay)
