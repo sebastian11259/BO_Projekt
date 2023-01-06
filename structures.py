@@ -277,10 +277,10 @@ class TimeTable:
                 lesson_hour = ran_lesson_empty[2]
                 self.table[0][ran_lesson_empty[0], ran_lesson_empty[1], ran_lesson_empty[2]] = [y, t, c, sub]
                 self.table[0][ran_year, ran_day, ran_hour] = 0
-                if t:
+                if t is not None:
                     self.table[1][t, ran_day, ran_hour] = 0
                     self.table[1][t, ran_lesson_empty[1], ran_lesson_empty[2]] = [y, t, c, sub]
-                if c:
+                if c is not None:
                     self.table[2][c, ran_day, ran_hour] = 0
                     self.table[2][c, ran_lesson_empty[1], ran_lesson_empty[2]] = [y, t, c, sub]
             else:  # jezeli nie ma wolnych terminow mozna zrobic wyszukanie losowe i zamiana miejscami
@@ -307,13 +307,17 @@ class TimeTable:
 
             # wpisanie nowej sali
             y, t, c, sub = self.table[0][ran_lesson_lack[0], ran_lesson_lack[1], ran_lesson_lack[2]]
-            y_prev = self.table[2][classroom, ran_lesson_lack[1], ran_lesson_lack[2]][0]
+            # y_prev = self.table[2][classroom, ran_lesson_lack[1], ran_lesson_lack[2]][0]
+            if isinstance(self.table[2][classroom, ran_lesson_lack[1], ran_lesson_lack[2]], list):
+                y_prev = self.table[2][classroom, ran_lesson_lack[1], ran_lesson_lack[2]][0]
+                self.table[0][y_prev, ran_lesson_lack[1], ran_lesson_lack[2]][2] = c
             self.table[0][y, ran_lesson_lack[1], ran_lesson_lack[2]][2] = classroom
             self.table[2][classroom, ran_lesson_lack[1], ran_lesson_lack[2]] = [y, t, classroom, sub]
-            if t:
+            if t is not None:
                 self.table[1][t, ran_lesson_lack[1], ran_lesson_lack[2]] = [y, t, classroom, sub]
-            if isinstance(self.table[2][classroom, ran_lesson_lack[1], ran_lesson_lack[2]], list):
-                self.table[0][y_prev, ran_lesson_lack[1], ran_lesson_lack[2]][2] = c
+            # if isinstance(self.table[2][classroom, ran_lesson_lack[1], ran_lesson_lack[2]], list):
+            #     y_prev = self.table[2][classroom, ran_lesson_lack[1], ran_lesson_lack[2]][0]
+            #     self.table[0][y_prev, ran_lesson_lack[1], ran_lesson_lack[2]][2] = c
         else:
             ran_year = None
             ran_day = None
@@ -354,13 +358,15 @@ class TimeTable:
 
             # wpisanie nowego nauczyciela
             y, t, c, sub = self.table[0][ran_lesson_lack[0], ran_lesson_lack[1], ran_lesson_lack[2]]
-            y_prev = self.table[1][teach, ran_lesson_lack[1], ran_lesson_lack[2]][0]
+            if isinstance(self.table[1][teach, ran_lesson_lack[1], ran_lesson_lack[2]], list):
+                y_prev = self.table[1][teach, ran_lesson_lack[1], ran_lesson_lack[2]][0]
+                self.table[0][y_prev, ran_lesson_lack[1], ran_lesson_lack[2]][1] = t
             self.table[0][y, ran_lesson_lack[1], ran_lesson_lack[2]][1] = teach
             self.table[1][teach, ran_lesson_lack[1], ran_lesson_lack[2]] = [y, teach, c, sub]
-            if c:
+            if c is not None:
                 self.table[2][c, ran_lesson_lack[1], ran_lesson_lack[2]] = [y, teach, c, sub]
-            if isinstance(self.table[1][teach, ran_lesson_lack[1], ran_lesson_lack[2]], list):
-                self.table[0][y_prev, ran_lesson_lack[1], ran_lesson_lack[2]][1] = t
+            # if isinstance(self.table[1][teach, ran_lesson_lack[1], ran_lesson_lack[2]], list):
+            #     self.table[0][y_prev, ran_lesson_lack[1], ran_lesson_lack[2]][1] = t
         else:
             ran_year = None
             ran_day = None
@@ -451,9 +457,9 @@ class TimeTable:
         finishing_time = [i * weights[1] for i in self.finishing_time()]
         windows = [i * weights[2] for i in self.windows()]
         lack_of_teachers = [i * weights[3] for i in self.lack_of_teacher()]
-        lack_of_classrooms = [i * weights[0] for i in self.lack_of_rooms()]
+        lack_of_classrooms = [i * weights[4] for i in self.lack_of_rooms()]
         fun_val_for_years = []
-        for i in range(self.table[0].shape[4]):
+        for i in range(self.table[0].shape[0]):
             val = beginning_time[i] + finishing_time[i] + windows[i] + lack_of_teachers[i] + lack_of_classrooms[i]
             fun_val_for_years.append(val)
         mean = sum(fun_val_for_years)/len(fun_val_for_years)

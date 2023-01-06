@@ -4,6 +4,7 @@ import structures as st
 import copy
 import random
 import math
+from typing import List
 
 
 def sa_algorithm(temperature: float, alpha: float, eps: float, k: int, time_table: st.TimeTable, initial: int, neighbour: List[int], weights: List[int]):
@@ -32,10 +33,12 @@ def sa_algorithm(temperature: float, alpha: float, eps: float, k: int, time_tabl
     current_obj_fun = current_result.objective_fun(weights)
     end_result = copy.deepcopy(current_result)
     end_obj_fun = end_result.objective_fun(weights)
+    obj_fun_vector = [current_obj_fun]
 
     while T > eps:
         for i in range(k):
-            new_obj_fun, new_result = get_neighbours(neighbour, current_result)
+            new_obj_fun, new_result = get_neighbours(neighbour, current_result, weights)
+            obj_fun_vector.append(current_obj_fun)
             delta = new_obj_fun - current_obj_fun
             if delta <= 0:
                 current_result = new_result
@@ -51,14 +54,15 @@ def sa_algorithm(temperature: float, alpha: float, eps: float, k: int, time_tabl
                     current_obj_fun = new_obj_fun
         T = T * alpha
 
-    return end_result
+    return end_result, obj_fun_vector
 
 
-def get_neighbours(list_of_neigh, time_table: st.TimeTable):
+def get_neighbours(list_of_neigh, time_table: st.TimeTable, weights: List[int]):
 
     """
     :param list_of_neigh: a list of neighbourhood id's
     :param time_table: instance of TimeTable
+    :param weights: a list of weights to calculate the objective function
     :return: objective function value and instance of TimeTable
     """
 
@@ -76,7 +80,7 @@ def get_neighbours(list_of_neigh, time_table: st.TimeTable):
         else:
             raise ValueError("One of neighbourhood ID is wrong")
 
-        obj_fun_list.append(copy_list[i].objective_fun())
+        obj_fun_list.append(copy_list[i].objective_fun(weights))
 
     val, idx = min((val, idx) for (idx, val) in enumerate(obj_fun_list))
 
