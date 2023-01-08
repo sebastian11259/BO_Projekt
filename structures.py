@@ -73,15 +73,15 @@ class Year:
 
 
 class TimeTable:
-    def __init__(self):
+    def __init__(self, teach_dir, class_dir):
         self.classes = Classes()
         self.teachers = Teachers()
 
-        df = pd.read_excel('teachers.xlsx')
+        df = pd.read_excel(teach_dir)
         for i, j in df.iterrows():
             self.teachers.add_teacher((j['Imię i nazwisko']))
 
-        df = pd.read_excel('classes.xlsx')
+        df = pd.read_excel(class_dir)
         for i, j in df.iterrows():
             self.classes.add_class(str(j['Nr Sali']))
 
@@ -149,9 +149,9 @@ class TimeTable:
     def all_classes(self):
         return self.classes.list
 
-    def load_years(self):
-        for filename in os.listdir('Klasy'):
-            f = os.path.join('Klasy', filename)
+    def load_years(self, directory):
+        for filename in os.listdir(directory):
+            f = os.path.join(directory, filename)
             # checking if it is a xlsx file
             if os.path.isfile(f) and f[-4:] == 'xlsx':
                 df = pd.read_excel(f)
