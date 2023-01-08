@@ -12,10 +12,10 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 teachers = ''
 classrooms = ''
 years = ''
-initial = 1
 neigh = []
-weigh = [100] * 5
 year_list = []
+weigh = [100] * 5
+initial = 1
 temp = 1000000
 alpha = 0.8
 eps = 0.01
@@ -27,6 +27,8 @@ obj_fun_current_vec = None
 obj_fun_end = None
 list_of_tables = []
 widget = None
+headers = ["Mon", "Tue", "Wed", "Thu", "Fri"]
+char_width = sg.Text.char_width_in_pixels(("Helvetica", 5))
 
 
 def create_plot(obj_fun_current_vec, obj_fun_end):
@@ -54,7 +56,7 @@ tab1_layout = [
         sg.Combo(year_list, readonly=True, button_background_color='grey', key="-COMBO-", size=(10, 1), enable_events=True)
     ],
     [
-        sg.Table(values=[], headings=["Mon", "Tue", "Wed", "Thu", "Fri"], enable_events=True, key="-TABLE-",\
+        sg.Table(values=[], headings=headers, enable_events=True, key="-TABLE-", vertical_scroll_only=False,\
                  background_color="darkgrey", sbar_background_color='darkgrey', size=(100, 25), row_height=50,\
                  col_widths=[15, 15, 15, 15, 15], auto_size_columns=False, border_width=2, text_color="black")
     ]
@@ -207,7 +209,8 @@ while 1:
         weigh[3] = int(values["-LACK_TEACH-"])
     if event == "-LACK_CLASS-":
         weigh[4] = int(values["-LACK_CLASS-"])
-    if event == "-START-":
+    if event == "-START-" and neigh and teachers and classrooms and years:
+        list_of_tables = []
         if widget:
             widget.get_tk_widget().forget()
             plt.close('all')
@@ -220,7 +223,17 @@ while 1:
             list_of_tables.append(el)
     if event == "-COMBO-":
         if values["-COMBO-"] in year_list:
+            table_widget = window["-TABLE-"].Widget
             idx = year_list.index(values["-COMBO-"])
+            days = [0, 0, 0, 0, 0]
+            for row in list_of_tables[idx].values.tolist():
+                for i in range(len(row)):
+                    if row[i]:
+                        if len(row[i]) > days[i]:
+                            days[i] = len(row[i]) * char_width
             window["-TABLE-"].update(values=list_of_tables[idx].values.tolist())
+            for head, width in zip(headers, days):
+                table_widget.column(head, width=width)
+            table_widget.pack(side='left', fill='both', expand=True)
 
 window.close()
