@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import random
 from copy import deepcopy
-num_of_lessons_pear_day = 8
+num_of_lessons_pear_day = 10
 Days = [i for i in range(5)]
 Lesson_hours = [i for i in range(num_of_lessons_pear_day)]
 
@@ -102,9 +102,9 @@ class TimeTable:
         self.years: List[Year] = []
         self.d_years: Dict = {}
 
-        self.table: List[np.ndarray] = [np.zeros((0, 5, 8), dtype=object),
-                                        np.zeros((len(self.teachers.list), 5, 8), dtype=object),
-                                        np.zeros((len(self.classes.list), 5, 8), dtype=object)]
+        self.table: List[np.ndarray] = [np.zeros((0, 5, 10), dtype=object),
+                                        np.zeros((len(self.teachers.list), 5, 10), dtype=object),
+                                        np.zeros((len(self.classes.list), 5, 10), dtype=object)]
 
     def __str__(self):
         string = ""
@@ -120,7 +120,7 @@ class TimeTable:
         return new
 
     def update_size(self):
-        self.table[0] = np.zeros((len(self.years), 5, 8), dtype=object)
+        self.table[0] = np.zeros((len(self.years), 5, 10), dtype=object)
 
     def add_year(self, year):
         self.d_years[year] = len(self.d_years)
@@ -196,9 +196,9 @@ class TimeTable:
         tables = []
         for y in self.years:
             y_idx = self.get_year_id(y)
-            tt = np.zeros([8,5], dtype=object)
+            tt = np.zeros([10,5], dtype=object)
             for day in range(5):
-                for time in range(8):
+                for time in range(10):
                     if self.table[0][y_idx, day, time] == 0:
                         tt[time][day] = None
                     else:
@@ -223,7 +223,7 @@ class TimeTable:
         for y in self.years:
             y_idx = self.get_year_id(y)
             for day in range(5):
-                for time in range(8):
+                for time in range(10):
                     for s in y.subjects:
                         if s.hours_left != 0:
                             t_idx = self.choose_teacher(s, day, time)
@@ -237,7 +237,7 @@ class TimeTable:
         for y in self.years:
             y_idx = self.get_year_id(y)
             for day in range(5):
-                for time in range(8):
+                for time in range(10):
                     for s in y.subjects:
                         if s.hours_left != 0:
                             t_idx = self.choose_teacher(s, day, time)
@@ -251,7 +251,7 @@ class TimeTable:
                             continue
             if y.hours_left > 0:
                 for day in range(5):
-                    for time in range(8):
+                    for time in range(10):
                         if self.table[0][y_idx, day, time] == 0:
                             for s in y.subjects:
                                 if s.hours_left != 0:
