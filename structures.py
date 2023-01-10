@@ -162,9 +162,12 @@ class TimeTable:
                     for i in t:
                         t_.append(self.teachers.get_id(i))
                     c = str(j['Sala']).split(', ')  # lista s z excela - nr
-                    c_ = []                         # lista s z excela - id
-                    for i in c:
-                        c_.append(self.classes.get_id(i))
+                    if c[0] == 'nan':
+                        c_ = self.classes.dict.values()
+                    else:
+                        c_ = []                         # lista s z excela - id
+                        for i in c:
+                            c_.append(self.classes.get_id(i))
                     y.add_subject(j['Nazwa'], j['Liczba godzin'], t_, c_)
                 self.add_year(y)
 
