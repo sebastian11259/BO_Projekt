@@ -33,7 +33,7 @@ class Classes:
         self.dict[nr] = len(self.dict)
         self.list.append(nr)
 
-    def get_id(self, nr):
+    def get_id(self, nr: str):
         return self.dict[nr]
 
     def __str__(self):
@@ -160,14 +160,14 @@ class TimeTable:
                     t = j['Prowadzący'].split(', ') # lista prowadzących z excela - nazwy
                     t_ = []                         # lista prowadzących z excela - id
                     for i in t:
-                        t_.append(self.teachers.get_id(i))
+                        t_.append(self.teachers.get_id(i.strip()))
                     c = str(j['Sala']).split(', ')  # lista s z excela - nr
                     if c[0] == 'nan':
                         c_ = self.classes.dict.values()
                     else:
                         c_ = []                         # lista s z excela - id
                         for i in c:
-                            c_.append(self.classes.get_id(i))
+                            c_.append(self.classes.get_id(i.strip()))
                     y.add_subject(j['Nazwa'], j['Liczba godzin'], t_, c_)
                 self.add_year(y)
 

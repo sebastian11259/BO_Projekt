@@ -8,6 +8,8 @@ import numpy as np
 
 
 Ttable = structures.TimeTable(r"D:\Studia\5 semestr\BO2\BO_Projekt\Dane\teachers.xlsx", r"D:\Studia\5 semestr\BO2\BO_Projekt\Dane\classes.xlsx")
+print(Ttable.classes.dict)
+print(Ttable.classes.dict['19'])
 Ttable.load_years(r"D:\Studia\5 semestr\BO2\BO_Projekt\Dane\Klasy")
 Ttable.initial_2()
 
