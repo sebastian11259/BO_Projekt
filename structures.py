@@ -496,15 +496,34 @@ class TimeTable:
             number_of.append(num)
         return number_of
 
+    def many_teachers(self):
+        number_of: List[int] = []
+        for year in range(self.table[0].shape[0]):  # dla każdej klasy
+            num = 0  # ilość różnych nauczycieli prowadzących ten sam przedmiot dal tej samej klasy
+            other_teachers = {} #inni naczyciele którzy zostali przypisani do klasy
+            for day in Days:
+                for lesson_hour in Lesson_hours:
+                    if isinstance(self.table[0][year][day][lesson_hour], list) and self.table[0][year][day][lesson_hour][1] is not None:
+                        if self.table[0][year, day, lesson_hour][3].name not in other_teachers:
+                            other_teachers[self.table[0][year, day, lesson_hour][3].name] = []
+                        if self.table[0][year][day][lesson_hour][1] not in other_teachers[self.table[0][year, day, lesson_hour][3].name]:
+                            other_teachers[self.table[0][year, day, lesson_hour][3].name].append(self.table[0][year][day][lesson_hour][1])
+            for values in other_teachers.values():
+                num += len(values)
+            num -= len(list(other_teachers.values()))
+            number_of.append(num)
+        return number_of
+
     def objective_fun(self, weights: List[int]):
         beginning_time = [i * weights[0] for i in self.beginning_time()]
         finishing_time = [i * weights[1] for i in self.finishing_time()]
         windows = [i * weights[2] for i in self.windows()]
         lack_of_teachers = [i * weights[3] for i in self.lack_of_teacher()]
         lack_of_classrooms = [i * weights[4] for i in self.lack_of_rooms()]
+        many_teachers = [i * weights[5] for i in self.many_teachers()]
         fun_val_for_years = []
         for i in range(self.table[0].shape[0]):
-            val = beginning_time[i] + finishing_time[i] + windows[i] + lack_of_teachers[i] + lack_of_classrooms[i]
+            val = beginning_time[i] + finishing_time[i] + windows[i] + lack_of_teachers[i] + lack_of_classrooms[i] + many_teachers[i]
             fun_val_for_years.append(val)
         mean = sum(fun_val_for_years)/len(fun_val_for_years)
         return mean

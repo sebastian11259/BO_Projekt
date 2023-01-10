@@ -14,7 +14,7 @@ classrooms = ''
 years = ''
 neigh = []
 year_list = []
-weigh = [100] * 5
+weigh = [100] * 6
 initial = 1
 temp = 1000000
 alpha = 0.8
@@ -29,6 +29,7 @@ list_of_tables = []
 widget = None
 headers = ["Mon", "Tue", "Wed", "Thu", "Fri"]
 char_width = sg.Text.char_width_in_pixels(("Helvetica", 5))
+final_value = 0
 
 
 def create_plot(obj_fun_current_vec, obj_fun_end):
@@ -73,6 +74,10 @@ first_column = [
         sg.TabGroup([[sg.Tab("Time Tables", layout=tab1_layout, background_color="darkgrey", key="-TAB1-"),
                       sg.Tab("Graphs", layout=tab2_layout, background_color="darkgrey")]], size=(700, 500),\
                     background_color="darkgrey", tab_background_color="grey", key="-TAB_GROUP-")
+    ],
+    [
+        sg.Text("final value: ", background_color="darkgrey"),
+        sg.Text("", size=(0, 1), key='FINAL_OUTPUT', background_color="darkgrey")
     ]
 ]
 
@@ -122,19 +127,22 @@ sec_column = [
         sg.Text("Weights for objective function:", font=("", 12, "bold"), background_color="darkgrey")
     ],
     [
-        sg.Text("Beginning time:", background_color="darkgrey"), sg.Input(default_text="100", enable_events=True, key="-BEG_TIME-", size=(10, 1), pad=(35, 0))
+        sg.Text("Beginning time:", background_color="darkgrey"), sg.Input(default_text="100", enable_events=True, key="-BEG_TIME-", size=(10, 1), pad=(73, 0))
     ],
     [
-        sg.Text("Finishing time:", background_color="darkgrey"), sg.Input(default_text="100", enable_events=True, key="-FIN_TIME-", size=(10, 1), pad=(40, 0))
+        sg.Text("Finishing time:", background_color="darkgrey"), sg.Input(default_text="100", enable_events=True, key="-FIN_TIME-", size=(10, 1), pad=(78, 0))
     ],
     [
-        sg.Text("Windows:", background_color="darkgrey"), sg.Input(default_text="100", enable_events=True, key="-WINDOWS-", size=(10, 1), pad=(68, 0))
+        sg.Text("Windows:", background_color="darkgrey"), sg.Input(default_text="100", enable_events=True, key="-WINDOWS-", size=(10, 1), pad=(106, 0))
     ],
     [
-        sg.Text("Lacking teachers:", background_color="darkgrey"), sg.Input(default_text="100", enable_events=True, key="-LACK_TEACH-", size=(10, 1), pad=(22, 0))
+        sg.Text("Lacking teachers:", background_color="darkgrey"), sg.Input(default_text="100", enable_events=True, key="-LACK_TEACH-", size=(10, 1), pad=(60, 0))
     ],
     [
-        sg.Text("Lacking classrooms:", background_color="darkgrey"), sg.Input(default_text="100", enable_events=True, key="-LACK_CLASS-", size=(10, 1))
+        sg.Text("Lacking classrooms:", background_color="darkgrey"), sg.Input(default_text="100", enable_events=True, key="-LACK_CLASS-", size=(10, 1), pad=(43, 0))
+    ],
+    [
+        sg.Text("Many teachers per subject:", background_color="darkgrey"), sg.Input(default_text="100", enable_events=True, key="-MANY_TEACHERS-", size=(10, 1))
     ],
     [
         sg.Button("Start", enable_events=True, key="-START-", button_color='grey', size=(12, 2), pad=((140, 0), (20, 0)))
@@ -209,6 +217,8 @@ while 1:
         weigh[3] = int(values["-LACK_TEACH-"])
     if event == "-LACK_CLASS-":
         weigh[4] = int(values["-LACK_CLASS-"])
+    if event == "-MANY_TEACHERS-":
+        weigh[5] = int(values["-MANY_TEACHERS-"])
     if event == "-START-" and neigh and teachers and classrooms and years:
         list_of_tables = []
         if widget:
@@ -219,6 +229,8 @@ while 1:
         end_result, obj_fun_vector, obj_fun_current_vec, obj_fun_end = alg.sa_algorithm(temp, alpha, eps, k, Ttable,\
                                                                                         initial, neigh, weigh)
         widget = draw_figure(window["-CANVAS-"].TKCanvas, create_plot(obj_fun_current_vec, obj_fun_end))
+        window['FINAL_OUTPUT'].update(value=obj_fun_end[-1])
+        print(obj_fun_end[-1])
         for el in end_result.get_tables():
             list_of_tables.append(el)
     if event == "-COMBO-":
