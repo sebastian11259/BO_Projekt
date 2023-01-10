@@ -102,9 +102,9 @@ class TimeTable:
         self.years: List[Year] = []
         self.d_years: Dict = {}
 
-        self.table: List[np.ndarray] = [np.zeros((0, 5, 6), dtype=object),
-                                        np.zeros((len(self.teachers.list), 5, 6), dtype=object),
-                                        np.zeros((len(self.classes.list), 5, 6), dtype=object)]
+        self.table: List[np.ndarray] = [np.zeros((0, 5, 8), dtype=object),
+                                        np.zeros((len(self.teachers.list), 5, 8), dtype=object),
+                                        np.zeros((len(self.classes.list), 5, 8), dtype=object)]
 
     def __str__(self):
         string = ""
@@ -120,7 +120,7 @@ class TimeTable:
         return new
 
     def update_size(self):
-        self.table[0] = np.zeros((len(self.years), 5, 6), dtype=object)
+        self.table[0] = np.zeros((len(self.years), 5, 8), dtype=object)
 
     def add_year(self, year):
         self.d_years[year] = len(self.d_years)
