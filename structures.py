@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import random
 from copy import deepcopy
-num_of_lessons_pear_day = 6
+num_of_lessons_pear_day = 8
 Days = [i for i in range(5)]
 Lesson_hours = [i for i in range(num_of_lessons_pear_day)]
 
