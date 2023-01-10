@@ -196,9 +196,9 @@ class TimeTable:
         tables = []
         for y in self.years:
             y_idx = self.get_year_id(y)
-            tt = np.zeros([6,5], dtype=object)
+            tt = np.zeros([8,5], dtype=object)
             for day in range(5):
-                for time in range(6):
+                for time in range(8):
                     if self.table[0][y_idx, day, time] == 0:
                         tt[time][day] = None
                     else:
@@ -223,7 +223,7 @@ class TimeTable:
         for y in self.years:
             y_idx = self.get_year_id(y)
             for day in range(5):
-                for time in range(6):
+                for time in range(8):
                     for s in y.subjects:
                         if s.hours_left != 0:
                             t_idx = self.choose_teacher(s, day, time)
@@ -237,7 +237,7 @@ class TimeTable:
         for y in self.years:
             y_idx = self.get_year_id(y)
             for day in range(5):
-                for time in range(6):
+                for time in range(8):
                     for s in y.subjects:
                         if s.hours_left != 0:
                             t_idx = self.choose_teacher(s, day, time)
@@ -251,7 +251,7 @@ class TimeTable:
                             continue
             if y.hours_left > 0:
                 for day in range(5):
-                    for time in range(6):
+                    for time in range(8):
                         if self.table[0][y_idx, day, time] == 0:
                             for s in y.subjects:
                                 if s.hours_left != 0:
