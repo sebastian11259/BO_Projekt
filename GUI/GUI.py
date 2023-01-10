@@ -27,8 +27,8 @@ obj_fun_current_vec = None
 obj_fun_end = None
 list_of_tables = []
 widget = None
-headers = ["Mon", "Tue", "Wed", "Thu", "Fri"]
-char_width = sg.Text.char_width_in_pixels(("Helvetica", 5))
+headers = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+char_width = sg.Text.char_width_in_pixels(("Helvetica", 6))
 final_value = 0
 
 
@@ -181,43 +181,37 @@ while 1:
         if not values["-INIT1-"]:
             initial = 2
     if event == '-NCL-' or event == "-NSC-" or event == "-NST-":
-        if values["-NCL-"]:
-            if 1 not in neigh:
-                neigh.append(1)
-        if not values["-NCL-"]:
-            if 1 in neigh:
-                neigh.remove(1)
-        if values["-NSC-"]:
-            if 2 not in neigh:
-                neigh.append(2)
-        if not values["-NSC-"]:
-            if 2 in neigh:
-                neigh.remove(2)
-        if values["-NST-"]:
-            if 3 not in neigh:
-                neigh.append(3)
-        if not values["-NST-"]:
-            if 3 in neigh:
-                neigh.remove(3)
-    if event == "-TEMP-":
+        if values["-NCL-"] and 1 not in neigh:
+            neigh.append(1)
+        if not values["-NCL-"] and 1 in neigh:
+            neigh.remove(1)
+        if values["-NSC-"] and 2 not in neigh:
+            neigh.append(2)
+        if not values["-NSC-"] and 2 in neigh:
+            neigh.remove(2)
+        if values["-NST-"] and 3 not in neigh:
+            neigh.append(3)
+        if not values["-NST-"] and 3 in neigh:
+            neigh.remove(3)
+    if event == "-TEMP-" and values["-TEMP-"]:
         temp = float(values["-TEMP-"])
-    if event == "-ALPHA-":
+    if event == "-ALPHA-" and values["-ALPHA-"]:
         alpha = float(values["-ALPHA-"])
-    if event == "-EPS-":
+    if event == "-EPS-" and values["-EPS-"]:
         eps = float(values["-EPS-"])
-    if event == "-K-":
+    if event == "-K-" and values["-K-"]:
         k = int(values["-K-"])
-    if event == "-BEG_TIME-":
+    if event == "-BEG_TIME-" and values["-BEG_TIME-"]:
         weigh[0] = int(values["-BEG_TIME-"])
-    if event == "-FIN_TIME-":
+    if event == "-FIN_TIME-" and values["-FIN_TIME-"]:
         weigh[1] = int(values["-FIN_TIME-"])
-    if event == "-WINDOWS-":
+    if event == "-WINDOWS-" and values["-WINDOWS-"]:
         weigh[2] = int(values["-WINDOWS-"])
-    if event == "-LACK_TEACH-":
+    if event == "-LACK_TEACH-" and values["-LACK_TEACH-"]:
         weigh[3] = int(values["-LACK_TEACH-"])
-    if event == "-LACK_CLASS-":
+    if event == "-LACK_CLASS-" and values["-LACK_CLASS-"]:
         weigh[4] = int(values["-LACK_CLASS-"])
-    if event == "-MANY_TEACHERS-":
+    if event == "-MANY_TEACHERS-" and values["-MANY_TEACHERS-"]:
         weigh[5] = int(values["-MANY_TEACHERS-"])
     if event == "-START-" and neigh and teachers and classrooms and years:
         list_of_tables = []
@@ -230,7 +224,6 @@ while 1:
                                                                                         initial, neigh, weigh)
         widget = draw_figure(window["-CANVAS-"].TKCanvas, create_plot(obj_fun_current_vec, obj_fun_end))
         window['FINAL_OUTPUT'].update(value=obj_fun_end[-1])
-        print(obj_fun_end[-1])
         for el in end_result.get_tables():
             list_of_tables.append(el)
     if event == "-COMBO-":
