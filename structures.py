@@ -3,6 +3,7 @@ import os
 import pandas as pd
 import numpy as np
 import random
+from copy import deepcopy
 num_of_lessons_pear_day = 6
 Days = [i for i in range(5)]
 Lesson_hours = [i for i in range(num_of_lessons_pear_day)]
@@ -57,6 +58,10 @@ class Subject:
     def __str__(self):
         return str(self.name)
 
+    def __deepcopy__(self, memodict={}):
+        new = Subject(self.name, self.hours, self.teachers, self.classes)
+        return new
+
 
 class Year:
     def __init__(self, name):
@@ -71,9 +76,18 @@ class Year:
     def __str__(self):
         return str(self.name)
 
+    def __deepcopy__(self, memodict={}):
+        new = Year(self.name)
+        new.subjects = deepcopy(self.subjects)
+        new.hours_left = deepcopy(self.hours_left)
+        return new
+
 
 class TimeTable:
     def __init__(self, teach_dir, class_dir):
+        self.teach_dir = teach_dir
+        self.class_dir = class_dir
+
         self.classes = Classes()
         self.teachers = Teachers()
 
@@ -97,6 +111,13 @@ class TimeTable:
         for el in self.get_tables():
             string += str(el) + "\n"
         return string
+
+    def __deepcopy__(self, memodict={}):
+        new = TimeTable(self.teach_dir, self.class_dir)
+        new.years = self.years
+        new.d_years = self.d_years
+        new.table = deepcopy(self.table)
+        return new
 
     def update_size(self):
         self.table[0] = np.zeros((len(self.years), 5, 6), dtype=object)

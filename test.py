@@ -13,6 +13,7 @@ print(Ttable.classes.dict['19'])
 Ttable.load_years(r"D:\Studia\5 semestr\BO2\BO_Projekt\Dane\Klasy")
 Ttable.initial_2()
 
+
 # print(Ttable.all_classes())
 # print(Ttable.all_teachers())
 # print(Ttable.all_years())
