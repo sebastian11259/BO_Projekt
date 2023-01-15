@@ -30,7 +30,7 @@ widget = None
 headers = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
 char_width = sg.Text.char_width_in_pixels(("Helvetica", 8))
 final_value = 0
-number_of_lessons = 8
+number_of_lessons = 10
 
 
 def create_plot(obj_fun_current_vec, obj_fun_end):
