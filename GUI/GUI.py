@@ -103,12 +103,13 @@ sec_column = [
     ],
     [
         sg.Text("Choose initial result:", background_color="darkgrey"),
-        sg.Text("Number of lessons in a day:", background_color='darkgrey', pad=((60, 0), (0, 0)))
+        sg.Text("Number of lessons:", background_color='darkgrey', pad=((130, 0), (0, 0)))
     ],
     [
         sg.Radio('Initial 1', "INITIAL", key="-INIT1-", default=True, background_color="darkgrey", enable_events=True),
         sg.Radio('Initial 2', "INITIAL", key="-INIT2-", background_color="darkgrey", enable_events=True),
-        sg.Input(default_text="10", enable_events=True, key="-LESSONS-", size=(7, 1), pad=((90, 0), (0, 0)))
+        sg.Radio('Initial 3', "INITIAL", key="-INIT3-", background_color="darkgrey", enable_events=True),
+        sg.Input(default_text="10", enable_events=True, key="-LESSONS-", size=(7, 1), pad=((60, 0), (0, 0)))
     ],
     [
         sg.Text("Choose neighbourhoods:", background_color="darkgrey")
@@ -178,11 +179,13 @@ while 1:
             if os.path.isfile(f) and f[-4:] == 'xlsx':
                 year_list.append(filename[:-5])
         window['-COMBO-'].update(value='', values=year_list)
-    if event == "-INIT1-" or event == "-INIT2-":
+    if event == "-INIT1-" or event == "-INIT2-" or event == "-INIT3-":
         if values["-INIT1-"]:
             initial = 1
-        if not values["-INIT1-"]:
+        elif values["-INIT2-"]:
             initial = 2
+        elif values["-INIT3-"]:
+            initial = 3
     if event == "-LESSONS-" and values["-LESSONS-"]:
         number_of_lessons = int(values["-LESSONS-"])
     if event == '-NCL-' or event == "-NSC-" or event == "-NST-":
