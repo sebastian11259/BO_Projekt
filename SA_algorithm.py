@@ -79,8 +79,6 @@ def get_neighbours(list_of_neigh, time_table: st.TimeTable, weights: List[int]):
 
         if list_of_neigh[i] == 1:
             copy_list[i].neighbour_change_lesson()
-        # elif list_of_neigh[i] == 2:
-        #     copy_list[i].neighbour_add_teach_class()
         elif list_of_neigh[i] == 2:
             copy_list[i].neighbour_change_classroom()
         elif list_of_neigh[i] == 3:

@@ -265,12 +265,6 @@ class TimeTable:
 
     # Sąsiedztwo
 
-    def neighbour_change_year(self):
-        pass
-
-    def neighbour_change_day(self):
-        pass
-
     def neighbour_change_lesson(self):
         # wyszukuję losową klasę, dzień i godzinę
         ran_year = None
@@ -457,9 +451,6 @@ class TimeTable:
                     self.table[0][y, ran_day, ran_hour][1] = teach
                     self.table[1][teach, ran_day, ran_hour] = [y, teach, c, sub]
                     self.table[2][c, ran_day, ran_hour][2] = teach
-
-    def neighbour_change_subject(self):
-        pass
 
 # Funkcje do utowrzenia funkcji celu
 
