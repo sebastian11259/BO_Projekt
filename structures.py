@@ -84,9 +84,10 @@ class Year:
 
 
 class TimeTable:
-    def __init__(self, teach_dir, class_dir):
+    def __init__(self, teach_dir, class_dir, lessons):
         self.teach_dir = teach_dir
         self.class_dir = class_dir
+        self.lessons = lessons
 
         self.classes = Classes()
         self.teachers = Teachers()
@@ -102,9 +103,9 @@ class TimeTable:
         self.years: List[Year] = []
         self.d_years: Dict = {}
 
-        self.table: List[np.ndarray] = [np.zeros((0, 5, 10), dtype=object),
-                                        np.zeros((len(self.teachers.list), 5, 10), dtype=object),
-                                        np.zeros((len(self.classes.list), 5, 10), dtype=object)]
+        self.table: List[np.ndarray] = [np.zeros((0, 5, self.lessons), dtype=object),
+                                        np.zeros((len(self.teachers.list), 5, self.lessons), dtype=object),
+                                        np.zeros((len(self.classes.list), 5, self.lessons), dtype=object)]
 
     def __str__(self):
         string = ""
@@ -113,14 +114,14 @@ class TimeTable:
         return string
 
     def __deepcopy__(self, memodict={}):
-        new = TimeTable(self.teach_dir, self.class_dir)
+        new = TimeTable(self.teach_dir, self.class_dir, self.lessons)
         new.years = self.years
         new.d_years = self.d_years
         new.table = deepcopy(self.table)
         return new
 
     def update_size(self):
-        self.table[0] = np.zeros((len(self.years), 5, 10), dtype=object)
+        self.table[0] = np.zeros((len(self.years), 5, self.lessons), dtype=object)
 
     def add_year(self, year):
         self.d_years[year] = len(self.d_years)
@@ -196,9 +197,9 @@ class TimeTable:
         tables = []
         for y in self.years:
             y_idx = self.get_year_id(y)
-            tt = np.zeros([10,5], dtype=object)
+            tt = np.zeros([self.lessons, 5], dtype=object)
             for day in range(5):
-                for time in range(10):
+                for time in range(self.lessons):
                     if self.table[0][y_idx, day, time] == 0:
                         tt[time][day] = None
                     else:
@@ -223,7 +224,7 @@ class TimeTable:
         for y in self.years:
             y_idx = self.get_year_id(y)
             for day in range(5):
-                for time in range(10):
+                for time in range(self.lessons):
                     for s in y.subjects:
                         if s.hours_left != 0:
                             t_idx = self.choose_teacher(s, day, time)
@@ -237,7 +238,7 @@ class TimeTable:
         for y in self.years:
             y_idx = self.get_year_id(y)
             for day in range(5):
-                for time in range(10):
+                for time in range(self.lessons):
                     for s in y.subjects:
                         if s.hours_left != 0:
                             t_idx = self.choose_teacher(s, day, time)
@@ -251,7 +252,7 @@ class TimeTable:
                             continue
             if y.hours_left > 0:
                 for day in range(5):
-                    for time in range(10):
+                    for time in range(self.lessons):
                         if self.table[0][y_idx, day, time] == 0:
                             for s in y.subjects:
                                 if s.hours_left != 0:
@@ -280,7 +281,7 @@ class TimeTable:
         for i in range(50):
             ran_year = random.randint(0, self.table[0].shape[0]-1)
             ran_day = random.randint(0, len(Days)-1)
-            ran_hour = random.randint(0, len(Lesson_hours)-1)
+            ran_hour = random.randint(0, self.lessons-1)
             if isinstance(self.table[0][ran_year, ran_day, ran_hour], list):
                 break
 
@@ -290,7 +291,7 @@ class TimeTable:
             list_of_empty: List[List[int]] = []
 
             for day in Days:
-                for lesson_hour in Lesson_hours:
+                for lesson_hour in range(self.lessons):
                     if isinstance(self.table[0][ran_year][day][lesson_hour], int):
                         list_of_empty.append([ran_year, day, lesson_hour])
 
@@ -343,7 +344,7 @@ class TimeTable:
     def neighbour_add_teach_class(self):
         for year in range(self.table[0].shape[0]):
             for day in Days:
-                for lesson in Lesson_hours:
+                for lesson in range(self.lessons):
                     if isinstance(self.table[0][year, day, lesson], list):
                         if self.table[0][year, day, lesson][1] is None:
                             teach = self.choose_teacher(self.table[0][year, day, lesson][3], day, lesson)
@@ -368,7 +369,7 @@ class TimeTable:
         # znajduje lekcje gdzie nie ma sali
         for year in range(self.table[0].shape[0]):
             for day in Days:
-                for lesson_hour in Lesson_hours:
+                for lesson_hour in range(self.lessons):
                     if isinstance(self.table[0][year][day][lesson_hour], list) and \
                             self.table[0][year][day][lesson_hour][2] is None:
                         list_of_lacking_classroom.append(
@@ -377,7 +378,7 @@ class TimeTable:
         # wybiera losowo lekcje i losowo salę
         if list_of_lacking_classroom:
             ran_lesson_lack = random.choice(list_of_lacking_classroom)
-            classroom = random.choice(ran_lesson_lack[3].get_c())
+            classroom = random.choice(list(ran_lesson_lack[3].get_c()))
 
             # wpisanie nowej sali
             y, t, c, sub = self.table[0][ran_lesson_lack[0], ran_lesson_lack[1], ran_lesson_lack[2]]
@@ -395,7 +396,7 @@ class TimeTable:
             for i in range(50):
                 ran_year = random.randint(0, self.table[0].shape[0]-1)
                 ran_day = random.randint(0, len(Days)-1)
-                ran_hour = random.randint(0, len(Lesson_hours)-1)
+                ran_hour = random.randint(0, self.lessons-1)
                 if isinstance(self.table[0][ran_year, ran_day, ran_hour], list):
                     break
 
@@ -416,7 +417,7 @@ class TimeTable:
         # znajduje lekcje gdzie nie ma nauczyciela
         for year in range(self.table[0].shape[0]):
             for day in Days:
-                for lesson_hour in Lesson_hours:
+                for lesson_hour in range(self.lessons):
                     if isinstance(self.table[0][year][day][lesson_hour], list) and \
                             self.table[0][year][day][lesson_hour][1] is None:
                         list_of_lacking_teachers.append([year, day, lesson_hour, self.table[0][year][day][lesson_hour][3]])
@@ -442,7 +443,7 @@ class TimeTable:
             for i in range(50):
                 ran_year = random.randint(0, self.table[0].shape[0]-1)
                 ran_day = random.randint(0, len(Days)-1)
-                ran_hour = random.randint(0, len(Lesson_hours)-1)
+                ran_hour = random.randint(0, self.lessons-1)
                 if isinstance(self.table[0][ran_year, ran_day, ran_hour], list):
                     break
 
@@ -467,7 +468,7 @@ class TimeTable:
         for year in range(self.table[0].shape[0]):  # dla każdej klasy
             delay = 0  # opóźneinie w rozpoczęciu
             for day in Days:
-                for lesson_hour in Lesson_hours:
+                for lesson_hour in range(self.lessons):
                     if isinstance(self.table[0][year][day][lesson_hour], list):
                         break
                     delay += 1  # im wie
@@ -480,7 +481,7 @@ class TimeTable:
             delay = 0  # opóźneinie w zakonczeniu
             for day in Days:
                 delay_in_current_day = 0
-                for lesson_hour in reversed(Lesson_hours):
+                for lesson_hour in reversed(range(self.lessons)):
                     if isinstance(self.table[0][year][day][lesson_hour], list):
                         break
                     delay -= 1  # im mniejszy bd dealy tym lepiej można ewentualnie zrobić delay_time_for_classes = delay_time_for_classes - [min(delay_time_for_classes) for i in range(len(delay_time_for_classes))]
@@ -503,7 +504,7 @@ class TimeTable:
         for year in range(self.table[0].shape[0]):  # dla każdej klasy
             num = 0  # opóźneinie w rozpoczęciu
             for day in Days:
-                for lesson_hour in Lesson_hours:
+                for lesson_hour in range(self.lessons):
                     if isinstance(self.table[0][year][day][lesson_hour], list) and self.table[0][year][day][lesson_hour][1] is None:
                         num += 1
             number_of.append(num)
@@ -514,7 +515,7 @@ class TimeTable:
         for year in range(self.table[0].shape[0]):  # dla każdej klasy
             num = 0  # opóźneinie w rozpoczęciu
             for day in Days:
-                for lesson_hour in Lesson_hours:
+                for lesson_hour in range(self.lessons):
                     if isinstance(self.table[0][year][day][lesson_hour], list) and self.table[0][year][day][lesson_hour][2] is None:
                         num += 1
             number_of.append(num)
@@ -526,7 +527,7 @@ class TimeTable:
             num = 0  # ilość różnych nauczycieli prowadzących ten sam przedmiot dal tej samej klasy
             other_teachers = {} #inni naczyciele którzy zostali przypisani do klasy
             for day in Days:
-                for lesson_hour in Lesson_hours:
+                for lesson_hour in range(self.lessons):
                     if isinstance(self.table[0][year][day][lesson_hour], list) and self.table[0][year][day][lesson_hour][1] is not None:
                         if self.table[0][year, day, lesson_hour][3].name not in other_teachers:
                             other_teachers[self.table[0][year, day, lesson_hour][3].name] = []

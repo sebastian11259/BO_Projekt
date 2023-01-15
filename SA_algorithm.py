@@ -77,17 +77,19 @@ def get_neighbours(list_of_neigh, time_table: st.TimeTable, weights: List[int]):
 
         if list_of_neigh[i] == 1:
             copy_list[i].neighbour_change_lesson()
+        # elif list_of_neigh[i] == 2:
+        #     copy_list[i].neighbour_add_teach_class()
         elif list_of_neigh[i] == 2:
-            copy_list[i].neighbour_add_teach_class()
-        elif list_of_neigh[i] == 3:
             copy_list[i].neighbour_change_classroom()
-        elif list_of_neigh[i] == 4:
+        elif list_of_neigh[i] == 3:
             copy_list[i].neighbour_change_teacher()
         else:
             raise ValueError("One of neighbourhood ID is wrong")
 
         obj_fun_list.append(copy_list[i].objective_fun(weights))
 
-    val, idx = min((val, idx) for (idx, val) in enumerate(obj_fun_list))
+    # val, idx = min((val, idx) for (idx, val) in enumerate(obj_fun_list))
+    val = random.choice(obj_fun_list)
+    idx = obj_fun_list.index(val)
 
     return val, copy_list[idx]

@@ -28,8 +28,9 @@ obj_fun_end = None
 list_of_tables = []
 widget = None
 headers = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
-char_width = sg.Text.char_width_in_pixels(("Helvetica", 6))
+char_width = sg.Text.char_width_in_pixels(("Helvetica", 8))
 final_value = 0
+number_of_lessons = 8
 
 
 def create_plot(obj_fun_current_vec, obj_fun_end):
@@ -76,7 +77,7 @@ first_column = [
                     background_color="darkgrey", tab_background_color="grey", key="-TAB_GROUP-")
     ],
     [
-        sg.Text("final value: ", background_color="darkgrey"),
+        sg.Text("Final value: ", background_color="darkgrey"),
         sg.Text("", size=(0, 1), key='FINAL_OUTPUT', background_color="darkgrey")
     ]
 ]
@@ -101,11 +102,13 @@ sec_column = [
         sg.Input(key="-YEARS-", enable_events=True), sg.FolderBrowse("Browse", button_color="grey")
     ],
     [
-        sg.Text("Choose initial result:", background_color="darkgrey")
+        sg.Text("Choose initial result:", background_color="darkgrey"),
+        sg.Text("Number of lessons in a day:", background_color='darkgrey', pad=((60, 0), (0, 0)))
     ],
     [
         sg.Radio('Initial 1', "INITIAL", key="-INIT1-", default=True, background_color="darkgrey", enable_events=True),
-        sg.Radio('Initial 2', "INITIAL", key="-INIT2-", background_color="darkgrey", enable_events=True)
+        sg.Radio('Initial 2', "INITIAL", key="-INIT2-", background_color="darkgrey", enable_events=True),
+        sg.Input(default_text="10", enable_events=True, key="-LESSONS-", size=(7, 1), pad=((90, 0), (0, 0)))
     ],
     [
         sg.Text("Choose neighbourhoods:", background_color="darkgrey")
@@ -180,6 +183,8 @@ while 1:
             initial = 1
         if not values["-INIT1-"]:
             initial = 2
+    if event == "-LESSONS-" and values["-LESSONS-"]:
+        number_of_lessons = int(values["-LESSONS-"])
     if event == '-NCL-' or event == "-NSC-" or event == "-NST-":
         if values["-NCL-"] and 1 not in neigh:
             neigh.append(1)
@@ -218,7 +223,7 @@ while 1:
         if widget:
             widget.get_tk_widget().forget()
             plt.close('all')
-        Ttable = st.TimeTable(teachers, classrooms)
+        Ttable = st.TimeTable(teachers, classrooms, number_of_lessons)
         Ttable.load_years(years)
         end_result, obj_fun_vector, obj_fun_current_vec, obj_fun_end = alg.sa_algorithm(temp, alpha, eps, k, Ttable,\
                                                                                         initial, neigh, weigh)
