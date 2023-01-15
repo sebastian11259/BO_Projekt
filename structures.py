@@ -532,14 +532,14 @@ class TimeTable:
 
     def objective_fun(self, weights: List[int]):
         beginning_time = [i * weights[0] for i in self.beginning_time()]
-        finishing_time = [i * weights[1] for i in self.finishing_time()]
-        windows = [i * weights[2] for i in self.windows()]
-        lack_of_teachers = [i * weights[3] for i in self.lack_of_teacher()]
-        lack_of_classrooms = [i * weights[4] for i in self.lack_of_rooms()]
-        many_teachers = [i * weights[5] for i in self.many_teachers()]
+        # finishing_time = [i * weights[1] for i in self.finishing_time()]
+        windows = [i * weights[1] for i in self.windows()]
+        lack_of_teachers = [i * weights[2] for i in self.lack_of_teacher()]
+        lack_of_classrooms = [i * weights[3] for i in self.lack_of_rooms()]
+        many_teachers = [i * weights[4] for i in self.many_teachers()]
         fun_val_for_years = []
         for i in range(self.table[0].shape[0]):
-            val = beginning_time[i] + finishing_time[i] + windows[i] + lack_of_teachers[i] + lack_of_classrooms[i] + many_teachers[i]
+            val = beginning_time[i] + windows[i] + lack_of_teachers[i] + lack_of_classrooms[i] + many_teachers[i]
             fun_val_for_years.append(val)
         mean = sum(fun_val_for_years)/len(fun_val_for_years)
         return mean

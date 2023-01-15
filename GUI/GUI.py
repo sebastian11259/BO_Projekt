@@ -14,7 +14,7 @@ classrooms = ''
 years = ''
 neigh = []
 year_list = []
-weigh = [100] * 6
+weigh = [100] * 5
 initial = 1
 temp = 1000000
 alpha = 0.8
@@ -35,8 +35,8 @@ number_of_lessons = 10
 
 def create_plot(obj_fun_current_vec, obj_fun_end):
     # plt.plot(obj_fun_vector)
-    plt.plot(obj_fun_current_vec)
-    plt.plot(obj_fun_end)
+    plt.plot(obj_fun_current_vec, linewidth=0.5)
+    plt.plot(obj_fun_end, linewidth=0.5)
     plt.title("Object function")
     plt.xlabel("Iteration")
     plt.ylabel("Obj fun value")
@@ -133,9 +133,9 @@ sec_column = [
     [
         sg.Text("Beginning time:", background_color="darkgrey"), sg.Input(default_text="100", enable_events=True, key="-BEG_TIME-", size=(10, 1), pad=(73, 0))
     ],
-    [
-        sg.Text("Finishing time:", background_color="darkgrey"), sg.Input(default_text="100", enable_events=True, key="-FIN_TIME-", size=(10, 1), pad=(78, 0))
-    ],
+    # [
+    #     sg.Text("Finishing time:", background_color="darkgrey"), sg.Input(default_text="100", enable_events=True, key="-FIN_TIME-", size=(10, 1), pad=(78, 0))
+    # ],
     [
         sg.Text("Windows:", background_color="darkgrey"), sg.Input(default_text="100", enable_events=True, key="-WINDOWS-", size=(10, 1), pad=(106, 0))
     ],
@@ -211,16 +211,16 @@ while 1:
         k = int(values["-K-"])
     if event == "-BEG_TIME-" and values["-BEG_TIME-"]:
         weigh[0] = int(values["-BEG_TIME-"])
-    if event == "-FIN_TIME-" and values["-FIN_TIME-"]:
-        weigh[1] = int(values["-FIN_TIME-"])
+    # if event == "-FIN_TIME-" and values["-FIN_TIME-"]:
+    #     weigh[1] = int(values["-FIN_TIME-"])
     if event == "-WINDOWS-" and values["-WINDOWS-"]:
-        weigh[2] = int(values["-WINDOWS-"])
+        weigh[1] = int(values["-WINDOWS-"])
     if event == "-LACK_TEACH-" and values["-LACK_TEACH-"]:
-        weigh[3] = int(values["-LACK_TEACH-"])
+        weigh[2] = int(values["-LACK_TEACH-"])
     if event == "-LACK_CLASS-" and values["-LACK_CLASS-"]:
-        weigh[4] = int(values["-LACK_CLASS-"])
+        weigh[3] = int(values["-LACK_CLASS-"])
     if event == "-MANY_TEACHERS-" and values["-MANY_TEACHERS-"]:
-        weigh[5] = int(values["-MANY_TEACHERS-"])
+        weigh[4] = int(values["-MANY_TEACHERS-"])
     if event == "-START-" and neigh and teachers and classrooms and years:
         list_of_tables = []
         if widget:
