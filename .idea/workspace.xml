@@ -47,7 +47,7 @@
     "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   }
 }]]></component>
-  <component name="RunManager" selected="Python.GUI">
+  <component name="RunManager" selected="Python.test">
     <configuration name="GUI" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="BO_Projekt" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -116,8 +116,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.GUI" />
         <item itemvalue="Python.test" />
+        <item itemvalue="Python.GUI" />
       </list>
     </recent_temporary>
   </component>
@@ -137,7 +137,7 @@
       <workItem from="1673297644159" duration="144000" />
       <workItem from="1673300204302" duration="1777000" />
       <workItem from="1673360238194" duration="7227000" />
-      <workItem from="1673874216552" duration="4981000" />
+      <workItem from="1673874216552" duration="6466000" />
     </task>
     <servers />
   </component>
@@ -149,7 +149,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/test.py</url>
-          <line>17</line>
+          <line>16</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -176,7 +176,7 @@
     </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/structures_py$test.coverage" NAME="test Coverage Results" MODIFIED="1673874721526" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/structures_py$test.coverage" NAME="test Coverage Results" MODIFIED="1673894135575" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/BO_Projekt$test.coverage" NAME="test Coverage Results" MODIFIED="1670780217619" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/BO_Projekt$structures.coverage" NAME="structures Coverage Results" MODIFIED="1670767607368" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/structures_py$GUI.coverage" NAME="GUI Coverage Results" MODIFIED="1673880670130" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/GUI" />

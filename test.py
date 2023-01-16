@@ -8,11 +8,10 @@ import numpy as np
 from random import sample
 
 
-# Ttable = structures.TimeTable(r"D:\Studia\5 semestr\BO2\BO_Projekt\Dane\teachers.xlsx", r"D:\Studia\5 semestr\BO2\BO_Projekt\Dane\classrooms.xlsx")
-# print(Ttable.classrooms.dict)
-# print(Ttable.classrooms.dict['19'])
-# Ttable.load_years(r"D:\Studia\5 semestr\BO2\BO_Projekt\Dane\Klasy")
-# Ttable.initial_2()
+Ttable = structures.TimeTable(r"D:\Studia\5 semestr\BO2\BO_Projekt\Dane\teachers.xlsx", r"D:\Studia\5 semestr\BO2\BO_Projekt\Dane\classes.xlsx", 10)
+Ttable.load_years(r"D:\Studia\5 semestr\BO2\BO_Projekt\Dane\Klasy")
+Ttable.initial_2()
+Ttable.to_excel(r"D:\Studia\5 semestr\BO2\BO_Projekt\Dane\plan.xlsx")
 
 
 # print(Ttable.all_classes())
@@ -26,8 +25,6 @@ from random import sample
 # print(Ttable)
 # print(Ttable.many_teachers())
 
-a = [1,2,3,4,5,6,7,8,9]
-print(sample(a, 9))
 
 
 

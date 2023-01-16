@@ -219,7 +219,14 @@ class TimeTable:
 
         return tables
 
-# Rozwiązanie startowe
+    def to_excel(self, filepath: str):
+        writer = pd.ExcelWriter(filepath)
+        for i, t in enumerate(self.get_tables()):
+            df = pd.DataFrame(t)
+            df.to_excel(writer, sheet_name="{}".format(self.years[i].name))
+        writer.close()
+
+    # Rozwiązanie startowe
     def initial_1(self):  # rozkłada zajęcia po kolei w wolnych terminach
         for y in self.years:
             y_idx = self.get_year_id(y)
