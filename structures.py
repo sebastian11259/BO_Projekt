@@ -412,19 +412,24 @@ class TimeTable:
                 ran_year = random.randint(0, self.table[0].shape[0]-1)
                 ran_day = random.randint(0, len(Days)-1)
                 ran_hour = random.randint(0, self.lessons-1)
-                if isinstance(self.table[0][ran_year, ran_day, ran_hour], list):
+                if isinstance(self.table[0][ran_year, ran_day, ran_hour], list) and ran_year is not None and ran_day is not None and ran_hour is not None:
                     break
 
-            if isinstance(self.table[0][ran_year, ran_day, ran_hour], list):
+            if isinstance(self.table[0][ran_year, ran_day, ran_hour], list) and ran_year is not None and ran_day is not None and ran_hour is not None:
                 ran_sub = self.table[0][ran_year][ran_day][ran_hour][3]
-                classroom = random.choice(ran_sub.get_c())
+                classroom = random.choice(list(ran_sub.get_c()))
                 y, t, c, sub = self.table[0][ran_year, ran_day, ran_hour]
-                if c in self.table[2][classroom, ran_day, ran_hour][2].get_c():
-                    y_prev = self.table[2][classroom, ran_day, ran_hour][0]
-                    self.table[0][y_prev, ran_day, ran_hour][2] = c
+                if isinstance(self.table[2][classroom, ran_day, ran_hour], list):
+                    if c in self.table[2][classroom, ran_day, ran_hour][3].get_c():
+                        y_prev = self.table[2][classroom, ran_day, ran_hour][0]
+                        self.table[0][y_prev, ran_day, ran_hour][2] = c
+                        self.table[0][y, ran_day, ran_hour][2] = classroom
+                        self.table[1][t, ran_day, ran_hour] = classroom
+                        self.table[2][classroom, ran_day, ran_hour] = [y, t, classroom, sub]
+                elif isinstance(self.table[2][classroom, ran_day, ran_hour], int):
                     self.table[0][y, ran_day, ran_hour][2] = classroom
                     self.table[1][t, ran_day, ran_hour] = classroom
-                    self.table[2][classroom, ran_day, ran_hour][2] = [y, t, classroom, sub]
+                    self.table[2][classroom, ran_day, ran_hour] = [y, t, classroom, sub]
 
     def neighbour_change_teacher(self):
         list_of_lacking_teachers: List[List[int]] = []
@@ -459,16 +464,21 @@ class TimeTable:
                 ran_year = random.randint(0, self.table[0].shape[0]-1)
                 ran_day = random.randint(0, len(Days)-1)
                 ran_hour = random.randint(0, self.lessons-1)
-                if isinstance(self.table[0][ran_year, ran_day, ran_hour], list):
+                if isinstance(self.table[0][ran_year, ran_day, ran_hour], list) and ran_year is not None and ran_day is not None and ran_hour is not None:
                     break
 
-            if isinstance(self.table[0][ran_year, ran_day, ran_hour], list):
+            if isinstance(self.table[0][ran_year, ran_day, ran_hour], list) and ran_year is not None and ran_day is not None and ran_hour is not None:
                 ran_sub = self.table[0][ran_year][ran_day][ran_hour][3]
-                teach = random.choice(ran_sub.get_t())
+                teach = random.choice(list(ran_sub.get_t()))
                 y, t, c, sub = self.table[0][ran_year, ran_day, ran_hour]
-                if t in self.table[1][teach, ran_day, ran_hour][3].get_t():
-                    y_prev = self.table[1][teach, ran_day, ran_hour][0]
-                    self.table[0][y_prev, ran_day, ran_hour][1] = t
+                if isinstance(self.table[1][teach, ran_day, ran_hour], list):
+                    if t in self.table[1][teach, ran_day, ran_hour][3].get_t():
+                        y_prev = self.table[1][teach, ran_day, ran_hour][0]
+                        self.table[0][y_prev, ran_day, ran_hour][1] = t
+                        self.table[0][y, ran_day, ran_hour][1] = teach
+                        self.table[1][teach, ran_day, ran_hour] = [y, teach, c, sub]
+                        self.table[2][c, ran_day, ran_hour][2] = teach
+                elif isinstance(self.table[1][teach, ran_day, ran_hour], int):
                     self.table[0][y, ran_day, ran_hour][1] = teach
                     self.table[1][teach, ran_day, ran_hour] = [y, teach, c, sub]
                     self.table[2][c, ran_day, ran_hour][2] = teach
