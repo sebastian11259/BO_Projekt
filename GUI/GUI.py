@@ -33,6 +33,30 @@ final_value = 0
 number_of_lessons = 10
 
 
+def popup_after_alg(table):
+    column = [
+        [sg.Text("Algorithm has finished. Do you want to save the result?", background_color='darkgrey')],
+        [sg.Input(visible=False, enable_events=True, key="-SAVE-"), sg.FileSaveAs("Save", button_color='grey', size=(5, 1), file_types=(("Excel files", ".xlsx"), )),
+         sg.Button("No", enable_events=True, button_color='grey', size=(3, 1))]
+    ]
+
+    layout = [
+        [sg.VPush(background_color='darkgrey')],
+        [sg.Push(background_color='darkgrey'),
+         sg.Column(column, element_justification='c', background_color='darkgrey'),
+         sg.Push(background_color='darkgrey')],
+        [sg.VPush(background_color='darkgrey')]
+    ]
+
+    window = sg.Window("Finished", layout=layout, use_default_focus=False, modal=True, background_color='darkgrey')
+    event, values = window.read()
+    if event == sg.WINDOW_CLOSED or event == "No":
+        window.close()
+    if event == "-SAVE-":
+        table.to_excel(values["-SAVE-"])
+    window.close()
+
+
 def create_plot(obj_fun_current_vec, obj_fun_end):
     # plt.plot(obj_fun_vector)
     plt.plot(obj_fun_current_vec, linewidth=0.5)
@@ -150,7 +174,10 @@ sec_column = [
     ],
     [
         sg.Button("Start", enable_events=True, key="-START-", button_color='grey', size=(12, 2), pad=((140, 0), (20, 0)))
-    ]
+    ],
+    # [
+    #     sg.Input(), sg.SaveAs("Save as", button_color='darkgrey', file_types=(("Excel files", ".xlsx"),))
+    # ]
 ]
 
 layout = [
@@ -234,6 +261,7 @@ while 1:
         window['FINAL_OUTPUT'].update(value=obj_fun_end[-1])
         for el in end_result.get_tables():
             list_of_tables.append(el)
+        popup_after_alg(end_result)
     if event == "-COMBO-":
         if values["-COMBO-"] in year_list:
             table_widget = window["-TABLE-"].Widget
