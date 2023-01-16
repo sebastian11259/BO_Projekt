@@ -402,7 +402,7 @@ class TimeTable:
                 self.table[0][y_prev, ran_lesson_lack[1], ran_lesson_lack[2]][2] = c
             self.table[0][y, ran_lesson_lack[1], ran_lesson_lack[2]][2] = classroom
             self.table[2][classroom, ran_lesson_lack[1], ran_lesson_lack[2]] = [y, t, classroom, sub]
-            if t is not None:
+            if t is not None and isinstance(self.table[1][t, ran_lesson_lack[1], ran_lesson_lack[2]], list):
                 self.table[1][t, ran_lesson_lack[1], ran_lesson_lack[2]][2] = classroom
         else:
             ran_year = None
@@ -454,7 +454,7 @@ class TimeTable:
                 self.table[0][y_prev, ran_lesson_lack[1], ran_lesson_lack[2]][1] = t
             self.table[0][y, ran_lesson_lack[1], ran_lesson_lack[2]][1] = teach
             self.table[1][teach, ran_lesson_lack[1], ran_lesson_lack[2]] = [y, teach, c, sub]
-            if c is not None:
+            if c is not None and isinstance(self.table[2][c, ran_lesson_lack[1], ran_lesson_lack[2]], list):
                 self.table[2][c, ran_lesson_lack[1], ran_lesson_lack[2]][1] = teach
         else:
             ran_year = None
