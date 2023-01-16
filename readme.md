@@ -31,7 +31,7 @@ plik zawiera klasy na których odbywa się optymalizacja
         self.hours_left = hours#zmienna pomocnicza
         #opisująca ile pozostało godzin do rozłozenia
         self.teachers = teachers
-        self.classes = classes
+        self.classrooms = classes
       ```
   * ```get_t``` - zwraca listenauczycieli
   * ```get_c``` - zwraca liste klas

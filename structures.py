@@ -25,7 +25,7 @@ class Teachers:
         return str(self.dict)
 
 
-class Classes:
+class Classrooms:
     def __init__(self):
         self.list = []
         self.dict = {}
@@ -42,24 +42,24 @@ class Classes:
 
 
 class Subject:
-    def __init__(self, name, hours, teachers: List[int], classes: List[int]):
+    def __init__(self, name, hours, teachers: List[int], classrooms: List[int]):
         self.name = name
         self.hours = hours
         self.hours_left = hours
         self.teachers = teachers
-        self.classes = classes
+        self.classrooms = classrooms
 
     def get_t(self):
         return self.teachers
 
     def get_c(self):
-        return self.classes
+        return self.classrooms
 
     def __str__(self):
         return str(self.name)
 
     def __deepcopy__(self, memodict={}):
-        new = Subject(self.name, self.hours, self.teachers, self.classes)
+        new = Subject(self.name, self.hours, self.teachers, self.classrooms)
         return new
 
 
@@ -89,7 +89,7 @@ class TimeTable:
         self.class_dir = class_dir
         self.lessons = lessons
 
-        self.classes = Classes()
+        self.classes = Classrooms()
         self.teachers = Teachers()
 
         df = pd.read_excel(teach_dir)
