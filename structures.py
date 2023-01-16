@@ -263,6 +263,20 @@ class TimeTable:
                                 else:
                                     continue
 
+    def initial_3(self):  # rozkłada zajęcia w po kolei w wolnych terminach
+        for y in self.years:
+            y_idx = self.get_year_id(y)
+            for day in random.sample(range(5),5):
+                for time in random.sample(range(self.lessons), self.lessons):
+                    for s in y.subjects:
+                        if s.hours_left != 0:
+                            t_idx = self.choose_teacher(s, day, time)
+                            c_idx = self.choose_class(s, day, time)
+                            self.put_sub(day, time, y_idx, t_idx, c_idx, s)
+                            break
+                        else:
+                            continue
+
     # Sąsiedztwo
 
     def neighbour_change_lesson(self):

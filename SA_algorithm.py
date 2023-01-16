@@ -25,8 +25,8 @@ def sa_algorithm(temperature: float, alpha: float, eps: float, k: int, time_tabl
         time_table.initial_1()
     elif initial == 2:
         time_table.initial_2()
-    # elif initial == 3:
-    #     time_table.initial_3()
+    elif initial == 3:
+        time_table.initial_3()
     else:
         raise ValueError("Wrong initial result ID")
 
