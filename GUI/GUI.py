@@ -3,9 +3,8 @@
 
 import os
 import PySimpleGUI as sg
-import pandas as pd
-import structures as st
 import SA_algorithm as alg
+import structures as st
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
