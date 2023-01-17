@@ -273,8 +273,8 @@ class TimeTable:
     def initial_3(self):  # rozkłada zajęcia w po kolei w wolnych terminach
         for y in self.years:
             y_idx = self.get_year_id(y)
-            for day in random.sample(range(5),5):
-                for time in random.sample(range(self.lessons), self.lessons):
+            for time in random.sample(range(self.lessons), self.lessons):
+                for day in random.sample(range(5),5):
                     for s in y.subjects:
                         if s.hours_left != 0:
                             t_idx = self.choose_teacher(s, day, time)
@@ -424,11 +424,11 @@ class TimeTable:
                         y_prev = self.table[2][classroom, ran_day, ran_hour][0]
                         self.table[0][y_prev, ran_day, ran_hour][2] = c
                         self.table[0][y, ran_day, ran_hour][2] = classroom
-                        self.table[1][t, ran_day, ran_hour] = classroom
+                        self.table[1][t, ran_day, ran_hour][2] = classroom
                         self.table[2][classroom, ran_day, ran_hour] = [y, t, classroom, sub]
                 elif isinstance(self.table[2][classroom, ran_day, ran_hour], int):
                     self.table[0][y, ran_day, ran_hour][2] = classroom
-                    self.table[1][t, ran_day, ran_hour] = classroom
+                    self.table[1][t, ran_day, ran_hour][2] = classroom
                     self.table[2][classroom, ran_day, ran_hour] = [y, t, classroom, sub]
 
     def neighbour_change_teacher(self):
